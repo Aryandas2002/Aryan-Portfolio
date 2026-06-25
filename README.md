@@ -3,6 +3,7 @@
 Personal portfolio site. Minimal, editorial, single-page.
 
 **Live:** [aryandas.github.io](https://aryandas.github.io)
+**Source:** [github.com/Aryandas2002/Aryan-Portfolio](https://github.com/Aryandas2002/Aryan-Portfolio)
 
 ## Stack
 Pure HTML, CSS, and a small amount of vanilla JavaScript. No build step.
