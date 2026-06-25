@@ -5,3 +5,7 @@ Thumbs.db
 node_modules/
 .vscode/
 .claude/
+dist/
+_legacy/
+src/logos.json
+src/company-logos.json
