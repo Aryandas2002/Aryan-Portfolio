@@ -4,3 +4,4 @@ icons*.json
 Thumbs.db
 node_modules/
 .vscode/
+.claude/
