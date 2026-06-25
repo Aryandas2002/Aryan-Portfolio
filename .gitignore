@@ -1,0 +1,6 @@
+*.b64
+icons*.json
+.DS_Store
+Thumbs.db
+node_modules/
+.vscode/
