@@ -91,7 +91,7 @@
   @media (max-width:680px){.nav-links{display:none}}
 
   /* Sections */
-  section{padding:140px 6vw;max-width:1080px;margin:0 auto;position:relative}
+  section{padding:140px 6vw;max-width:1320px;margin:0 auto;position:relative}
 
   /* Hero */
   .hero{
@@ -543,11 +543,11 @@
   /* Floating decorative blobs in hero */
   .blob{
     position:absolute;border-radius:50%;
-    filter:blur(60px);opacity:.35;z-index:-1;pointer-events:none;
+    filter:blur(80px);opacity:.22;z-index:-1;pointer-events:none;
     animation:blob 18s ease-in-out infinite;
   }
-  .blob.b1{width:340px;height:340px;background:#ffd9c2;top:8%;right:-80px}
-  .blob.b2{width:260px;height:260px;background:#c9e2ff;bottom:8%;left:-60px;animation-delay:-7s}
+  .blob.b1{width:300px;height:300px;background:#ffd9c2;top:12%;right:6%}
+  .blob.b2{width:240px;height:240px;background:#c9e2ff;bottom:14%;left:8%;animation-delay:-7s}
   @keyframes blob{
     0%,100%{transform:translate(0,0) scale(1)}
     50%{transform:translate(20px,-30px) scale(1.1)}
