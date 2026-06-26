@@ -9,7 +9,9 @@
     --hover:#f1f0eb;
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
   html{scroll-behavior:smooth;scroll-padding-top:90px;overflow-x:hidden}
+  body{overflow-x:hidden}
   /* slim themed scrollbar */
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-track{background:transparent}
@@ -27,29 +29,9 @@
   }
   ::selection{background:var(--ink);color:var(--bg)}
 
-  /* Minimal custom cursor */
-  .cursor{
-    position:fixed;top:0;left:0;width:10px;height:10px;border-radius:50%;
-    border:1px solid var(--ink);pointer-events:none;z-index:9999;
-    transform:translate(-50%,-50%);
-    transition:width .3s ease,height .3s ease,background .3s ease,opacity .25s;
-    mix-blend-mode:difference;
-    background:transparent;
-  }
-  .cursor.hover{width:42px;height:42px;background:var(--ink)}
-  @media(hover:none){.cursor{display:none}body{cursor:auto}}
+  /* (removed unused custom-cursor styles) */
 
-  /* Page-load curtain */
-  .curtain{
-    position:fixed;inset:0;background:var(--ink);z-index:9000;
-    transform-origin:bottom;pointer-events:none;
-    animation:curtain 1.2s cubic-bezier(.77,0,.18,1) .2s forwards;
-  }
-  @keyframes curtain{
-    0%{transform:scaleY(1)}
-    99%{transform:scaleY(0);visibility:visible}
-    100%{transform:scaleY(0);visibility:hidden}
-  }
+  /* (removed unused page-load curtain) */
 
   /* Scroll progress */
   .scroll-bar{
