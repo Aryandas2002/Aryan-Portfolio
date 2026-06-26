@@ -530,16 +530,21 @@ export default function App() {
           <h2>Kind <em>words</em>.</h2>
         </div>
         <div className="testimonials-grid">
-          {(liveTestimonials.length > 0 ? liveTestimonials : TESTIMONIALS).map((t, i) => (
-            <figure className={`tcard reveal${i ? ' d' + Math.min(i, 3) : ''}${t.placeholder ? ' placeholder' : ''}`} key={t.submittedAt || i}>
-              <div className="quote-mark">“</div>
-              <blockquote>{t.quote}</blockquote>
-              <figcaption>
-                <div className="t-name">{t.name}</div>
-                <div className="t-role">{t.role}{t.company && t.company !== t.role && ` · ${t.company}`}</div>
-              </figcaption>
-            </figure>
-          ))}
+          {(liveTestimonials.length > 0 ? liveTestimonials : TESTIMONIALS).map((t, i) => {
+            // Live testimonials load AFTER the reveal IntersectionObserver runs,
+            // so bake the `in` class onto them so they're always visible
+            const isLive = liveTestimonials.length > 0;
+            return (
+              <figure className={`tcard reveal${isLive ? ' in' : ''}${i ? ' d' + Math.min(i, 3) : ''}${t.placeholder ? ' placeholder' : ''}`} key={t.submittedAt || i}>
+                <div className="quote-mark">“</div>
+                <blockquote>{t.quote}</blockquote>
+                <figcaption>
+                  <div className="t-name">{t.name}</div>
+                  <div className="t-role">{t.role}{t.company && t.company !== t.role && ` · ${t.company}`}</div>
+                </figcaption>
+              </figure>
+            );
+          })}
         </div>
         <div className="testimonial-cta reveal">
           <span>Worked with me?</span>
