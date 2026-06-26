@@ -1,6 +1,33 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TOOLS } from './tools.js';
 import { ULTRAHUMAN, ATLYS } from './companies.js';
+
+// Change this to control who can submit a testimonial
+const TESTIMONIAL_PASS = 'aryan2025';
+
+const TESTIMONIALS = [
+  {
+    quote: "Aryan rebuilt our QC pipeline from scratch — what used to take a manager half a day now runs in the background. He thinks like ops, ships like an engineer.",
+    name: 'Add yours',
+    role: 'Add yours',
+    company: 'Add yours',
+    placeholder: true,
+  },
+  {
+    quote: "The Codex LMS he co-built is the first internal docs system our new hires actually open on day one. Quizzes were a small touch that completely changed onboarding.",
+    name: 'Add yours',
+    role: 'Add yours',
+    company: 'Add yours',
+    placeholder: true,
+  },
+  {
+    quote: "Drop in, find the gap, ship the fix. Three weeks in and our ticket logger was running hourly — we stopped chasing numbers and started running the team.",
+    name: 'Add yours',
+    role: 'Add yours',
+    company: 'Add yours',
+    placeholder: true,
+  },
+];
 
 const STATS = [
   { target: 10, suffix: '+', label: 'Tools shipped' },
@@ -84,6 +111,36 @@ const SKILLS = [
 
 export default function App() {
   const scrollBarRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  const [step, setStep] = useState('pass'); // 'pass' | 'form' | 'sent'
+  const [pass, setPass] = useState('');
+  const [passError, setPassError] = useState('');
+  const [form, setForm] = useState({ name: '', role: '', company: '', quote: '' });
+
+  const submitPass = (e) => {
+    e.preventDefault();
+    if (pass.trim().toLowerCase() === TESTIMONIAL_PASS.toLowerCase()) {
+      setPassError('');
+      setStep('form');
+    } else {
+      setPassError('Hmm, that code didn\'t match. Ask Aryan for it.');
+    }
+  };
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    const body = `Name: ${form.name}%0D%0ARole: ${form.role}%0D%0ACompany: ${form.company}%0D%0A%0D%0AQuote:%0D%0A${form.quote}`;
+    window.location.href = `mailto:aryandaspvt@gmail.com?subject=Testimonial%20for%20Aryan&body=${body}`;
+    setStep('sent');
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setTimeout(() => {
+      setStep('pass'); setPass(''); setPassError('');
+      setForm({ name: '', role: '', company: '', quote: '' });
+    }, 300);
+  };
 
   // Reveal-on-scroll observer
   useEffect(() => {
@@ -99,29 +156,55 @@ export default function App() {
     return () => io.disconnect();
   }, []);
 
-  // Counter animations
+  // Looping counter animations — restart every ~7s while visible
   useEffect(() => {
-    const counterIO = new IntersectionObserver((entries) => {
+    const visible = new Set();
+    const timers = new Map();
+
+    const runOnce = (el) => {
+      const target = +el.dataset.target;
+      const suffix = el.dataset.suffix || '';
+      const dur = 1400;
+      const start = performance.now();
+      const tick = (t) => {
+        const p = Math.min((t - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const n = Math.round(target * eased);
+        el.textContent = n + (p >= 1 ? suffix : '');
+        if (p < 1 && visible.has(el)) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const scheduleLoop = (el) => {
+      runOnce(el);
+      const id = setInterval(() => {
+        if (visible.has(el)) runOnce(el);
+      }, 7000);
+      timers.set(el, id);
+    };
+
+    const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
-        if (!e.isIntersecting) return;
         const el = e.target;
-        const target = +el.dataset.target;
-        const suffix = el.dataset.suffix || '';
-        const dur = 1400;
-        const start = performance.now();
-        const tick = (t) => {
-          const p = Math.min((t - start) / dur, 1);
-          const eased = 1 - Math.pow(1 - p, 3);
-          const n = Math.round(target * eased);
-          el.textContent = n + (p >= 1 ? suffix : '');
-          if (p < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-        counterIO.unobserve(el);
+        if (e.isIntersecting) {
+          if (!visible.has(el)) {
+            visible.add(el);
+            scheduleLoop(el);
+          }
+        } else {
+          visible.delete(el);
+          const id = timers.get(el);
+          if (id) { clearInterval(id); timers.delete(el); }
+        }
       });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('.num[data-target]').forEach((c) => counterIO.observe(c));
-    return () => counterIO.disconnect();
+    }, { threshold: 0.4 });
+
+    document.querySelectorAll('.num[data-target]').forEach((c) => io.observe(c));
+    return () => {
+      io.disconnect();
+      timers.forEach((id) => clearInterval(id));
+    };
   }, []);
 
   // Scroll progress
@@ -194,6 +277,7 @@ export default function App() {
           <a href="#experience" onClick={smoothScroll}>Experience</a>
           <a href="#tools" onClick={smoothScroll}>Tools</a>
           <a href="#work" onClick={smoothScroll}>Work</a>
+          <a href="#testimonials" onClick={smoothScroll}>Testimonials</a>
           <a href="#skills" onClick={smoothScroll}>Skills</a>
           <a href="#resume" onClick={smoothScroll}>Résumé</a>
           <a href="#contact" onClick={smoothScroll}>Contact</a>
@@ -366,9 +450,78 @@ export default function App() {
         </div>
       </section>
 
-      <section id="skills">
+      <section id="testimonials">
         <div className="section-head reveal">
           <span className="num">04 —</span>
+          <h2>Kind <em>words</em>.</h2>
+        </div>
+        <div className="testimonials-grid">
+          {TESTIMONIALS.map((t, i) => (
+            <figure className={`tcard reveal${i ? ' d' + Math.min(i, 3) : ''}${t.placeholder ? ' placeholder' : ''}`} key={i}>
+              <div className="quote-mark">“</div>
+              <blockquote>{t.quote}</blockquote>
+              <figcaption>
+                <div className="t-name">{t.name}</div>
+                <div className="t-role">{t.role}{t.company !== t.role && ` · ${t.company}`}</div>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+        <div className="testimonial-cta reveal">
+          <span>Worked with me?</span>
+          <button className="btn ghost" onClick={() => setShowModal(true)}>
+            <span>Share a testimonial</span> <span className="arrow">→</span>
+          </button>
+        </div>
+      </section>
+
+      {showModal && (
+        <div className="modal-backdrop" onClick={closeModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal} aria-label="Close">×</button>
+            {step === 'pass' && (
+              <form onSubmit={submitPass}>
+                <div className="modal-eyebrow">Invite-only</div>
+                <h3>Got a share code?</h3>
+                <p>Testimonials are gated to people I've actually worked with. Ask Aryan for the code, then paste it below.</p>
+                <input
+                  type="text"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  placeholder="share code"
+                  autoFocus
+                />
+                {passError && <div className="form-err">{passError}</div>}
+                <button type="submit" className="btn primary"><span>Continue</span> <span className="arrow">→</span></button>
+              </form>
+            )}
+            {step === 'form' && (
+              <form onSubmit={submitForm}>
+                <div className="modal-eyebrow">Almost there</div>
+                <h3>Tell me what worked.</h3>
+                <p>I'll review and add it to the site. Submissions open my email — no data goes anywhere else.</p>
+                <input required placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <input required placeholder="Your role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
+                <input required placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                <textarea required rows="4" placeholder="What did we build / fix together?" value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} />
+                <button type="submit" className="btn primary"><span>Send</span> <span className="arrow">→</span></button>
+              </form>
+            )}
+            {step === 'sent' && (
+              <div className="sent-block">
+                <div className="modal-eyebrow">Thanks ✓</div>
+                <h3>Your email client should be open now.</h3>
+                <p>Hit send and I'll review it within a few days. Appreciate it.</p>
+                <button className="btn primary" onClick={closeModal}><span>Done</span></button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <section id="skills">
+        <div className="section-head reveal">
+          <span className="num">05 —</span>
           <h2>What I <em>bring</em>.</h2>
         </div>
         <div className="skills-grid">
@@ -383,7 +536,7 @@ export default function App() {
 
       <section id="resume">
         <div className="section-head reveal">
-          <span className="num">05 —</span>
+          <span className="num">06 —</span>
           <h2>Résumé.</h2>
         </div>
         <div className="resume-block reveal">
