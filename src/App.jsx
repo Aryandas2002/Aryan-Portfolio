@@ -6,6 +6,13 @@ import { ULTRAHUMAN, ATLYS } from './companies.js';
 const TESTIMONIAL_PASS = 'aryan2025';
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqevqyqq';
 
+// JSONBin (live testimonial storage)
+// NOTE: This master key is bundled into client-side JS and visible in the source.
+// For better security, replace with a bin-scoped Access Key from the JSONBin dashboard.
+const JSONBIN_BIN_ID = '6a3ee8dff5f4af5e293636c9';
+const JSONBIN_KEY = '$2a$10$Pkd5HAjY4OOPgv.t9kQmL.rpEfUd12xBcapjg6YN6YFQv5opMQQHO';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
 const TESTIMONIALS = [
   {
     quote: "Aryan rebuilt our QC pipeline from scratch — what used to take a manager half a day now runs in the background. He thinks like ops, ships like an engineer.",
@@ -119,6 +126,20 @@ export default function App() {
   const [form, setForm] = useState({ name: '', role: '', company: '', quote: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [liveTestimonials, setLiveTestimonials] = useState([]);
+
+  // Fetch live testimonials from JSONBin on mount
+  useEffect(() => {
+    fetch(`${JSONBIN_URL}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY },
+    })
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        const list = data?.record?.testimonials;
+        if (Array.isArray(list)) setLiveTestimonials(list);
+      })
+      .catch(() => {});
+  }, []);
 
   const submitPass = (e) => {
     e.preventDefault();
@@ -134,26 +155,53 @@ export default function App() {
     e.preventDefault();
     setSubmitting(true);
     setSubmitError('');
+
+    const entry = {
+      quote: form.quote.trim(),
+      name: form.name.trim(),
+      role: form.role.trim(),
+      company: form.company.trim(),
+      submittedAt: new Date().toISOString(),
+    };
+
     try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
+      // 1. Read current testimonials from JSONBin
+      const readRes = await fetch(`${JSONBIN_URL}/latest`, {
+        headers: { 'X-Master-Key': JSONBIN_KEY },
+      });
+      if (!readRes.ok) throw new Error('read failed');
+      const readData = await readRes.json();
+      const current = Array.isArray(readData?.record?.testimonials)
+        ? readData.record.testimonials
+        : [];
+
+      // 2. Append new entry and write back
+      const updated = [...current, entry];
+      const writeRes = await fetch(JSONBIN_URL, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': JSONBIN_KEY,
+        },
+        body: JSON.stringify({ testimonials: updated }),
+      });
+      if (!writeRes.ok) throw new Error('write failed');
+
+      // 3. Fire-and-forget Formspree notification (so Aryan gets an email too)
+      fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          name: form.name,
-          role: form.role,
-          company: form.company,
-          quote: form.quote,
-          _subject: `Testimonial from ${form.name} (${form.company})`,
+          ...entry,
+          _subject: `Testimonial from ${entry.name} (${entry.company})`,
         }),
-      });
-      if (res.ok) {
-        setStep('sent');
-      } else {
-        const data = await res.json().catch(() => ({}));
-        setSubmitError(data.error || 'Something went wrong sending that. Try again in a moment.');
-      }
+      }).catch(() => {});
+
+      // 4. Update local state so it appears on the page immediately
+      setLiveTestimonials(updated);
+      setStep('sent');
     } catch (err) {
-      setSubmitError('Network error — check your connection and try again.');
+      setSubmitError("Couldn't save that — try again in a moment.");
     } finally {
       setSubmitting(false);
     }
@@ -482,13 +530,13 @@ export default function App() {
           <h2>Kind <em>words</em>.</h2>
         </div>
         <div className="testimonials-grid">
-          {TESTIMONIALS.map((t, i) => (
-            <figure className={`tcard reveal${i ? ' d' + Math.min(i, 3) : ''}${t.placeholder ? ' placeholder' : ''}`} key={i}>
+          {(liveTestimonials.length > 0 ? liveTestimonials : TESTIMONIALS).map((t, i) => (
+            <figure className={`tcard reveal${i ? ' d' + Math.min(i, 3) : ''}${t.placeholder ? ' placeholder' : ''}`} key={t.submittedAt || i}>
               <div className="quote-mark">“</div>
               <blockquote>{t.quote}</blockquote>
               <figcaption>
                 <div className="t-name">{t.name}</div>
-                <div className="t-role">{t.role}{t.company !== t.role && ` · ${t.company}`}</div>
+                <div className="t-role">{t.role}{t.company && t.company !== t.role && ` · ${t.company}`}</div>
               </figcaption>
             </figure>
           ))}
