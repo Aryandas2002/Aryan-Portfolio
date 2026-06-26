@@ -653,23 +653,10 @@
   .foot-col a .ext{color:var(--muted);margin-left:4px;font-size:11px}
 
   .foot-bottom{
-    padding-top:24px;border-top:1px solid var(--line);
-    font-size:12px;color:var(--muted);text-align:center;
-    display:flex;flex-direction:column;align-items:center;gap:8px;
-  }
-  .foot-bottom > *{display:inline-block}
-  .foot-bottom .meta{
-    display:flex;gap:8px 20px;flex-wrap:wrap;justify-content:center;align-items:center;
-  }
-  .foot-bottom .meta > *{display:inline-flex;align-items:center;gap:8px}
-  .foot-bottom .sep{color:var(--line);user-select:none}
-  .foot-bottom .meta .live{
-    display:inline-flex;align-items:center;gap:8px;
-  }
-  .foot-bottom .meta .live::before{
-    content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;
-    box-shadow:0 0 0 0 rgba(34,197,94,.6);
-    animation:pulseDot 2s infinite;
+    padding:24px 16px 0;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);
+    text-align:center;line-height:1.8;
+    width:100%;display:block;
   }
 
   /* Project title char-reveal on hover */

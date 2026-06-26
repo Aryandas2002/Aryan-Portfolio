@@ -629,13 +629,7 @@ export default function App() {
         </div>
 
         <div className="foot-bottom">
-          <div className="meta">
-            <span>© {year} Aryan Das. All rights reserved.</span>
-            <span className="sep">·</span>
-            <span className="live">Bengaluru, India</span>
-            <span className="sep">·</span>
-            <span>Built with care</span>
-          </div>
+          © {year} Aryan Das. All rights reserved.&nbsp;&nbsp;·&nbsp;&nbsp;Bengaluru, India&nbsp;&nbsp;·&nbsp;&nbsp;Built with care
         </div>
       </footer>
     </>
