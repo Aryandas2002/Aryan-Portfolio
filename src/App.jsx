@@ -379,16 +379,47 @@ export default function App() {
       </section>
 
       <footer className="site-foot">
-        <div className="brand">Aryan<span className="dot"></span></div>
-        <div className="footer-row">
-          <a href="#work" onClick={smoothScroll}>Work</a>
-          <a href="#experience" onClick={smoothScroll}>Experience</a>
-          <a href="#tools" onClick={smoothScroll}>Tools</a>
-          <a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener">Résumé ↗</a>
-          <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
-          <a href="mailto:aryandaspvt@gmail.com">Email ↗</a>
+        <div className="foot-top">
+          <div className="foot-brand">
+            <div className="mark">Aryan<span className="dot"></span></div>
+            <p>Automation specialist building internal tools, QA bots and reporting systems for CX teams.</p>
+          </div>
+
+          <div className="foot-col">
+            <h5>Navigate</h5>
+            <ul>
+              <li><a href="#about" onClick={smoothScroll}>About</a></li>
+              <li><a href="#experience" onClick={smoothScroll}>Experience</a></li>
+              <li><a href="#work" onClick={smoothScroll}>Work</a></li>
+              <li><a href="#tools" onClick={smoothScroll}>Tools</a></li>
+            </ul>
+          </div>
+
+          <div className="foot-col">
+            <h5>Connect</h5>
+            <ul>
+              <li><a href="mailto:aryandaspvt@gmail.com">Email <span className="ext">↗</span></a></li>
+              <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn <span className="ext">↗</span></a></li>
+              <li><a href="https://github.com/Aryandas2002" target="_blank" rel="noopener">GitHub <span className="ext">↗</span></a></li>
+            </ul>
+          </div>
+
+          <div className="foot-col">
+            <h5>Resources</h5>
+            <ul>
+              <li><a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener">Résumé <span className="ext">↗</span></a></li>
+              <li><a href="#contact" onClick={smoothScroll}>Book a call</a></li>
+            </ul>
+          </div>
         </div>
-        <div className="copy">© {year} Aryan Das</div>
+
+        <div className="foot-bottom">
+          <div>© {year} Aryan Das. All rights reserved.</div>
+          <div className="meta">
+            <span className="live">Bengaluru, India</span>
+            <span>Built with React + Vite</span>
+          </div>
+        </div>
       </footer>
     </>
   );
