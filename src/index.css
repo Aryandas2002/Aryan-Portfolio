@@ -164,22 +164,13 @@
   .btn .arrow{display:inline-block;transition:transform .3s}
   .btn:hover .arrow{transform:translateX(4px)}
 
-  /* Stats — now in the hero right column, 2x2 card */
+  /* Stats — 2x2 grid, borderless */
   .stats{
-    display:grid;grid-template-columns:repeat(2,1fr);gap:0;
-    padding:36px;
-    background:#fff;border:1px solid var(--line);border-radius:6px;
-    box-shadow:0 30px 80px -50px rgba(0,0,0,.12);
+    display:grid;grid-template-columns:repeat(2,1fr);gap:28px 40px;
+    padding:8px 0;
     animation:fadeUp 1s ease 1.5s both;
-    position:relative;
   }
-  .stats::before{
-    content:'';position:absolute;top:0;left:0;width:60px;height:3px;background:var(--ink);
-    border-radius:6px 0 0 0;
-  }
-  .stat{padding:14px 18px 14px 0;border-bottom:1px solid var(--line)}
-  .stat:nth-child(2n){padding-left:24px;border-left:1px solid var(--line)}
-  .stat:nth-child(3),.stat:nth-child(4){border-bottom:none}
+  .stat{padding:0}
   .stat .num{
     font-family:'Fraunces',serif;font-weight:300;
     font-size:42px;letter-spacing:-.02em;
@@ -725,9 +716,9 @@
   /* Tools wrap subtle gradient pulse */
   .tools-wrap::before,.tools-wrap::after{transition:opacity .5s}
 
-  /* Hero right column — Available card + current focus */
+  /* Hero right column — Available card + current focus, borderless */
   .available-card{
-    padding:24px 28px;border:1px solid var(--line);border-radius:6px;background:#fff;
+    padding:6px 0 22px;border-bottom:1px solid var(--line);
     display:flex;align-items:center;justify-content:space-between;gap:20px;
     animation:fadeUp 1s ease 1.3s both;
   }
@@ -750,7 +741,7 @@
   }
 
   .focus-card{
-    padding:24px 28px;border:1px solid var(--line);border-radius:6px;background:#fff;
+    padding:18px 0 0;border-top:1px solid var(--line);
     animation:fadeUp 1s ease 1.7s both;
   }
   .focus-card .label{
