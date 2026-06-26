@@ -431,13 +431,6 @@ export default function App() {
         </h2>
 
         <a href="mailto:aryandaspvt@gmail.com" className="email-big">aryandaspvt@gmail.com →</a>
-
-        <div className="row-meta">
-          <div className="left">
-            <b>Free 30-minute call.</b><br />
-            No pitch, just a real conversation about your CX ops, automations or hiring.
-          </div>
-        </div>
       </section>
 
       <footer className="site-foot">
