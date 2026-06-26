@@ -96,7 +96,7 @@
   /* Hero */
   .hero{
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    padding-top:140px;
+    padding-top:140px;position:relative;overflow:hidden;
   }
   .hero .meta{
     display:flex;align-items:center;gap:12px;
@@ -491,14 +491,23 @@
     transition:transform .4s cubic-bezier(.2,.9,.3,1);
   }
   .logo-item .tool-svg,.logo-item svg{
-    height:60px;width:60px;display:block;overflow:visible;
-    filter:grayscale(1) brightness(.55);
-    opacity:.75;
-    transition:filter .45s ease,opacity .45s ease,transform .45s cubic-bezier(.2,.9,.3,1);
+    height:58px;width:58px;display:block;overflow:visible;
+    opacity:.95;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0));
+    transition:opacity .45s ease,transform .55s cubic-bezier(.2,.9,.3,1),filter .45s ease;
+    animation:logoFloat 6s ease-in-out infinite;
+  }
+  .logo-item:nth-child(2n) svg{animation-delay:-2s}
+  .logo-item:nth-child(3n) svg{animation-delay:-4s}
+  @keyframes logoFloat{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-4px)}
   }
   .logo-item:hover .tool-svg,.logo-item:hover svg{
-    filter:grayscale(0) brightness(1);
-    opacity:1;transform:scale(1.12);
+    opacity:1;
+    transform:translateY(-10px) scale(1.2) rotate(-4deg);
+    filter:drop-shadow(0 12px 22px rgba(0,0,0,.18));
+    animation-play-state:paused;
   }
   .logo-item .ll{
     font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;
@@ -515,17 +524,157 @@
   }
   .co-logo img{
     width:74%;height:74%;object-fit:contain;display:block;
-    filter:grayscale(1) brightness(.5);
-    opacity:.75;
-    transition:filter .4s ease,opacity .4s ease;
+    opacity:1;
+    transition:transform .5s cubic-bezier(.2,.9,.3,1);
   }
-  .co-logo.dark{background:#1a1a1a;border-color:#1a1a1a}
-  .co-logo.dark img{width:64%;height:64%;filter:grayscale(1) brightness(1.1);opacity:.7}
+  .co-logo.dark{background:#000;border-color:#000}
+  .co-logo.dark img{width:64%;height:64%}
   .job:hover .co-logo{
-    transform:rotate(-4deg) scale(1.06);
-    box-shadow:0 8px 24px -8px rgba(0,0,0,.18);
+    transform:rotate(-5deg) scale(1.08);
+    box-shadow:0 12px 28px -8px rgba(0,0,0,.22);
   }
   .job:hover .co-logo:not(.dark){border-color:var(--ink)}
-  .job:hover .co-logo.dark{background:#000;border-color:#000}
-  .job:hover .co-logo img{filter:grayscale(0) brightness(1);opacity:1}
+  .job:hover .co-logo img{transform:scale(1.1)}
   .job-inner{display:flex;gap:20px;align-items:flex-start}
+
+  /* ============================ */
+  /* Extra animations & footer    */
+  /* ============================ */
+
+  /* Floating decorative blobs in hero */
+  .blob{
+    position:absolute;border-radius:50%;
+    filter:blur(60px);opacity:.35;z-index:-1;pointer-events:none;
+    animation:blob 18s ease-in-out infinite;
+  }
+  .blob.b1{width:340px;height:340px;background:#ffd9c2;top:8%;right:-80px}
+  .blob.b2{width:260px;height:260px;background:#c9e2ff;bottom:8%;left:-60px;animation-delay:-7s}
+  @keyframes blob{
+    0%,100%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(20px,-30px) scale(1.1)}
+  }
+
+  /* Magnetic project arrow */
+  .project .arrow{display:inline-block;font-size:22px;align-self:center;
+    opacity:0;transform:translateX(-10px);transition:opacity .35s ease,transform .4s cubic-bezier(.2,.9,.3,1)}
+  .project:hover .arrow{opacity:1;transform:translateX(0)}
+
+  /* Magnetic email scale */
+  .contact-cta .email-big{
+    display:inline-block;transition:transform .5s cubic-bezier(.2,.9,.3,1);
+  }
+  .contact-cta .email-big:hover{transform:scale(1.04)}
+
+  /* Animated underline on socials */
+  .footer-row a{position:relative;display:inline-block;color:var(--ink-soft);text-decoration:none;font-size:14px;padding:4px 0;transition:color .25s}
+  .footer-row a::after{
+    content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
+    background:var(--ink);transform-origin:right;transform:scaleX(0);
+    transition:transform .45s cubic-bezier(.77,0,.18,1);
+  }
+  .footer-row a:hover{color:var(--ink)}
+  .footer-row a:hover::after{transform-origin:left;transform:scaleX(1)}
+
+  /* Big CTA section above footer */
+  .contact-cta{
+    padding:160px 6vw 120px;max-width:1080px;margin:0 auto;
+    position:relative;text-align:left;overflow:hidden;
+  }
+  .contact-cta .small{
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+    display:inline-flex;align-items:center;gap:10px;margin-bottom:32px;
+  }
+  .contact-cta .small::before{content:'';width:30px;height:1px;background:var(--ink);display:inline-block}
+  .contact-cta h2{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(40px,7vw,86px);line-height:1.02;letter-spacing:-.03em;
+    margin-bottom:48px;max-width:920px;
+  }
+  .contact-cta h2 em{font-style:italic;color:var(--muted)}
+  .contact-cta h2 .reveal-word{
+    display:inline-block;overflow:hidden;vertical-align:bottom;
+  }
+  .contact-cta h2 .reveal-word span{
+    display:inline-block;transform:translateY(110%);
+    transition:transform .9s cubic-bezier(.2,.9,.3,1);
+  }
+  .contact-cta.in h2 .reveal-word span{transform:translateY(0)}
+  .contact-cta .email-big{
+    font-family:'Fraunces',serif;font-size:clamp(26px,3.6vw,44px);font-weight:300;
+    color:var(--ink);text-decoration:none;letter-spacing:-.01em;
+    border-bottom:1px solid var(--ink);padding-bottom:6px;
+  }
+  .contact-cta .row-meta{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-top:56px;flex-wrap:wrap;gap:24px;
+  }
+  .contact-cta .row-meta .left{
+    font-size:13px;color:var(--muted);max-width:340px;line-height:1.6;
+  }
+  .contact-cta .row-meta .left b{color:var(--ink);font-weight:500}
+  .contact-cta .book-btn{
+    padding:16px 28px;border:1px solid var(--ink);border-radius:999px;
+    background:var(--ink);color:var(--bg);text-decoration:none;
+    font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:10px;
+    overflow:hidden;position:relative;
+    transition:background .4s,color .4s,gap .3s;
+  }
+  .contact-cta .book-btn:hover{background:transparent;color:var(--ink);gap:16px}
+  .contact-cta .book-btn .dot-live{
+    width:7px;height:7px;border-radius:50%;background:#22c55e;
+    box-shadow:0 0 0 0 rgba(34,197,94,.6);
+    animation:pulseDot 2s infinite;
+  }
+  @keyframes pulseDot{
+    0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
+    70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}
+    100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+  }
+
+  /* Minimal footer */
+  footer.site-foot{
+    border-top:1px solid var(--line);
+    padding:36px 6vw;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+    max-width:1180px;margin:0 auto;
+  }
+  footer.site-foot .brand{
+    font-family:'Fraunces',serif;font-size:15px;font-weight:400;letter-spacing:-.01em;
+  }
+  footer.site-foot .brand .dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ink);
+    margin-left:2px;vertical-align:1px;
+  }
+  footer.site-foot .footer-row{display:flex;gap:28px;flex-wrap:wrap}
+  footer.site-foot .copy{font-size:12px;color:var(--muted)}
+
+  /* Project title char-reveal on hover */
+  .project h3{
+    background-image:linear-gradient(var(--ink),var(--ink));
+    background-size:0% 1px;background-repeat:no-repeat;background-position:left bottom;
+    transition:background-size .55s cubic-bezier(.77,0,.18,1);
+    padding-bottom:4px;
+  }
+  .project:hover h3{background-size:30% 1px}
+
+  /* Subtle entry for h1 letters via existing word-slide already */
+
+  /* Skill cards: shimmer sweep */
+  .skill{position:relative;overflow:hidden}
+  .skill::after{
+    content:'';position:absolute;top:0;left:-150%;width:60%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(0,0,0,.04),transparent);
+    transition:left .9s ease;
+  }
+  .skill:hover::after{left:150%}
+
+  /* Magnetic CTA button general */
+  .btn.primary{will-change:transform}
+  .btn.ghost{will-change:transform}
+
+  /* Animated stat number rise */
+  .stat{transition:transform .4s cubic-bezier(.2,.9,.3,1)}
+  .stat:hover{transform:translateY(-5px)}
+
+  /* Tools wrap subtle gradient pulse */
+  .tools-wrap::before,.tools-wrap::after{transition:opacity .5s}

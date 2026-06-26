@@ -130,6 +130,40 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Magnetic buttons
+  useEffect(() => {
+    const btns = document.querySelectorAll('.btn,.book-btn');
+    const handlers = [];
+    btns.forEach((btn) => {
+      const move = (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        btn.style.transform = `translate(${x * 0.2}px, ${y * 0.3}px)`;
+      };
+      const leave = () => { btn.style.transform = ''; };
+      btn.addEventListener('mousemove', move);
+      btn.addEventListener('mouseleave', leave);
+      handlers.push([btn, move, leave]);
+    });
+    return () => handlers.forEach(([b, m, l]) => {
+      b.removeEventListener('mousemove', m);
+      b.removeEventListener('mouseleave', l);
+    });
+  }, []);
+
+  // Hero parallax on mouse
+  useEffect(() => {
+    const h1 = document.querySelector('.hero h1');
+    const onMove = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 8;
+      const y = (e.clientY / window.innerHeight - 0.5) * 8;
+      if (h1) h1.style.transform = `translate(${x}px,${y}px)`;
+    };
+    document.addEventListener('mousemove', onMove);
+    return () => document.removeEventListener('mousemove', onMove);
+  }, []);
+
   // Smooth scroll on hash links
   const smoothScroll = (e) => {
     const href = e.currentTarget.getAttribute('href');
@@ -162,6 +196,8 @@ export default function App() {
       </nav>
 
       <section className="hero" id="about">
+        <div className="blob b1" aria-hidden="true"></div>
+        <div className="blob b2" aria-hidden="true"></div>
         <div className="meta">Automations · CX Systems · India</div>
         <h1>
           <span className="word"><span style={{ animationDelay: '.1s' }}>Automation&nbsp;</span></span>
@@ -311,21 +347,48 @@ export default function App() {
         </div>
       </section>
 
-      <section id="contact">
-        <div className="contact-card reveal">
-          <span className="tag">— Get in touch —</span>
-          <h2>Have a workflow that <em>should</em><br />be automated?</h2>
-          <a href="mailto:aryandaspvt@gmail.com" className="email">aryandaspvt@gmail.com</a>
-          <div className="socials">
-            <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
-            <a href="mailto:aryandaspvt@gmail.com">Email ↗</a>
+      <section id="contact" className="contact-cta reveal">
+        <span className="small">Get in touch</span>
+        <h2>
+          <span className="reveal-word"><span>Still&nbsp;</span></span>
+          <span className="reveal-word"><span>have&nbsp;</span></span>
+          <span className="reveal-word"><span>a&nbsp;</span></span>
+          <span className="reveal-word"><span><em>workflow</em>&nbsp;</span></span>
+          <span className="reveal-word"><span>to&nbsp;</span></span>
+          <span className="reveal-word"><span>automate?</span></span>
+          <br />
+          <span className="reveal-word"><span><em>Let's&nbsp;</em></span></span>
+          <span className="reveal-word"><span><em>talk&nbsp;</em></span></span>
+          <span className="reveal-word"><span><em>it&nbsp;</em></span></span>
+          <span className="reveal-word"><span><em>through.</em></span></span>
+        </h2>
+
+        <a href="mailto:aryandaspvt@gmail.com" className="email-big">aryandaspvt@gmail.com →</a>
+
+        <div className="row-meta">
+          <div className="left">
+            <b>Free 30-minute call.</b><br />
+            No pitch, just a real conversation about your CX ops, automations or hiring.
           </div>
+          <a href="mailto:aryandaspvt@gmail.com?subject=Quick%20chat" className="book-btn">
+            <span className="dot-live"></span>
+            <span>Book a call</span>
+            <span className="arrow">→</span>
+          </a>
         </div>
       </section>
 
-      <footer>
-        <div>© {year} Aryan Das</div>
-        <div>Designed & built with care.</div>
+      <footer className="site-foot">
+        <div className="brand">Aryan<span className="dot"></span></div>
+        <div className="footer-row">
+          <a href="#work" onClick={smoothScroll}>Work</a>
+          <a href="#experience" onClick={smoothScroll}>Experience</a>
+          <a href="#tools" onClick={smoothScroll}>Tools</a>
+          <a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener">Résumé ↗</a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a href="mailto:aryandaspvt@gmail.com">Email ↗</a>
+        </div>
+        <div className="copy">© {year} Aryan Das</div>
       </footer>
     </>
   );
