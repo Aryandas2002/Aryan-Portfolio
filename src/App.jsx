@@ -4,6 +4,7 @@ import { ULTRAHUMAN, ATLYS } from './companies.js';
 
 // Change this to control who can submit a testimonial
 const TESTIMONIAL_PASS = 'aryan2025';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqevqyqq';
 
 const TESTIMONIALS = [
   {
@@ -116,6 +117,8 @@ export default function App() {
   const [pass, setPass] = useState('');
   const [passError, setPassError] = useState('');
   const [form, setForm] = useState({ name: '', role: '', company: '', quote: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const submitPass = (e) => {
     e.preventDefault();
@@ -127,11 +130,33 @@ export default function App() {
     }
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
-    const body = `Name: ${form.name}%0D%0ARole: ${form.role}%0D%0ACompany: ${form.company}%0D%0A%0D%0AQuote:%0D%0A${form.quote}`;
-    window.location.href = `mailto:aryandaspvt@gmail.com?subject=Testimonial%20for%20Aryan&body=${body}`;
-    setStep('sent');
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          role: form.role,
+          company: form.company,
+          quote: form.quote,
+          _subject: `Testimonial from ${form.name} (${form.company})`,
+        }),
+      });
+      if (res.ok) {
+        setStep('sent');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setSubmitError(data.error || 'Something went wrong sending that. Try again in a moment.');
+      }
+    } catch (err) {
+      setSubmitError('Network error — check your connection and try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const closeModal = () => {
@@ -139,6 +164,7 @@ export default function App() {
     setTimeout(() => {
       setStep('pass'); setPass(''); setPassError('');
       setForm({ name: '', role: '', company: '', quote: '' });
+      setSubmitError(''); setSubmitting(false);
     }, 300);
   };
 
@@ -499,19 +525,23 @@ export default function App() {
               <form onSubmit={submitForm}>
                 <div className="modal-eyebrow">Almost there</div>
                 <h3>Tell me what worked.</h3>
-                <p>I'll review and add it to the site. Submissions open my email — no data goes anywhere else.</p>
-                <input required placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                <input required placeholder="Your role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
-                <input required placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
-                <textarea required rows="4" placeholder="What did we build / fix together?" value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} />
-                <button type="submit" className="btn primary"><span>Send</span> <span className="arrow">→</span></button>
+                <p>I'll review and add approved ones to the site. Your submission goes straight to my inbox — nothing is shared publicly without your name attached.</p>
+                <input required disabled={submitting} placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <input required disabled={submitting} placeholder="Your role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
+                <input required disabled={submitting} placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                <textarea required disabled={submitting} rows="4" placeholder="What did we build / fix together?" value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} />
+                {submitError && <div className="form-err">{submitError}</div>}
+                <button type="submit" className="btn primary" disabled={submitting}>
+                  <span>{submitting ? 'Sending…' : 'Send'}</span>
+                  {!submitting && <span className="arrow">→</span>}
+                </button>
               </form>
             )}
             {step === 'sent' && (
               <div className="sent-block">
-                <div className="modal-eyebrow">Thanks ✓</div>
-                <h3>Your email client should be open now.</h3>
-                <p>Hit send and I'll review it within a few days. Appreciate it.</p>
+                <div className="modal-eyebrow">Received ✓</div>
+                <h3>Got it — thanks for the kind words.</h3>
+                <p>Your testimonial landed in my inbox. I'll review and add it to the site shortly. Appreciate it.</p>
                 <button className="btn primary" onClick={closeModal}><span>Done</span></button>
               </div>
             )}
