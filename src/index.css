@@ -653,11 +653,16 @@
   .foot-col a .ext{color:var(--muted);margin-left:4px;font-size:11px}
 
   .foot-bottom{
-    display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:20px;
     padding-top:24px;border-top:1px solid var(--line);
     font-size:12px;color:var(--muted);text-align:center;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
   }
-  .foot-bottom .meta{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+  .foot-bottom > *{display:inline-block}
+  .foot-bottom .meta{
+    display:flex;gap:8px 20px;flex-wrap:wrap;justify-content:center;align-items:center;
+  }
+  .foot-bottom .meta > *{display:inline-flex;align-items:center;gap:8px}
+  .foot-bottom .sep{color:var(--line);user-select:none}
   .foot-bottom .meta .live{
     display:inline-flex;align-items:center;gap:8px;
   }

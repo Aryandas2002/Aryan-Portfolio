@@ -476,10 +476,12 @@ export default function App() {
         </div>
 
         <div className="foot-bottom">
-          <div>© {year} Aryan Das. All rights reserved.</div>
           <div className="meta">
+            <span>© {year} Aryan Das. All rights reserved.</span>
+            <span className="sep">·</span>
             <span className="live">Bengaluru, India</span>
-            <span>Built with React + Vite</span>
+            <span className="sep">·</span>
+            <span>Built with care</span>
           </div>
         </div>
       </footer>
