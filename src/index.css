@@ -703,6 +703,87 @@
   /* Tools wrap subtle gradient pulse */
   .tools-wrap::before,.tools-wrap::after{transition:opacity .5s}
 
+  /* ===== Testimonials ===== */
+  .testimonials-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  @media(max-width:900px){.testimonials-grid{grid-template-columns:1fr}}
+  .tcard{
+    position:relative;padding:32px 28px 28px;
+    background:#fff;border:1px solid var(--line);border-radius:6px;
+    display:flex;flex-direction:column;gap:16px;
+    transition:transform .4s cubic-bezier(.2,.9,.3,1),box-shadow .4s,border-color .35s;
+  }
+  .tcard:hover{
+    transform:translateY(-6px);
+    box-shadow:0 24px 50px -28px rgba(0,0,0,.18);
+    border-color:#d6d4cc;
+  }
+  .tcard.placeholder{opacity:.7}
+  .tcard.placeholder:hover{opacity:1}
+  .tcard .quote-mark{
+    font-family:'Fraunces',serif;font-size:60px;line-height:1;color:var(--ink);
+    opacity:.18;position:absolute;top:14px;left:20px;pointer-events:none;
+  }
+  .tcard blockquote{
+    font-family:'Fraunces',serif;font-weight:300;font-size:18px;line-height:1.5;
+    letter-spacing:-.01em;color:var(--ink);position:relative;z-index:1;
+    margin:0;flex:1;
+  }
+  .tcard figcaption{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+  .tcard .t-name{font-size:14px;font-weight:500;color:var(--ink)}
+  .tcard .t-role{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:.02em}
+
+  .testimonial-cta{
+    margin-top:40px;display:flex;align-items:center;justify-content:center;gap:18px;
+    color:var(--muted);font-size:14px;flex-wrap:wrap;
+  }
+  .testimonial-cta button.btn{
+    border:none;background:transparent;font-family:'Inter',sans-serif;cursor:pointer;padding:0;
+  }
+
+  /* ===== Modal ===== */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(15,15,18,.55);
+    backdrop-filter:blur(6px);
+    display:flex;align-items:center;justify-content:center;
+    z-index:200;padding:6vw;
+    animation:fadeIn .25s ease both;
+  }
+  .modal{
+    background:#fff;border-radius:10px;padding:44px 40px 36px;max-width:480px;width:100%;
+    position:relative;
+    animation:modalUp .35s cubic-bezier(.2,.9,.3,1) both;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.4);
+  }
+  @keyframes modalUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .modal-close{
+    position:absolute;top:14px;right:14px;background:transparent;border:none;
+    font-size:24px;color:var(--muted);cursor:pointer;width:32px;height:32px;
+    border-radius:50%;display:grid;place-items:center;transition:background .2s,color .2s;
+  }
+  .modal-close:hover{background:var(--hover);color:var(--ink)}
+  .modal-eyebrow{
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:10px;
+  }
+  .modal h3{
+    font-family:'Fraunces',serif;font-weight:400;font-size:24px;letter-spacing:-.01em;
+    margin-bottom:8px;line-height:1.2;
+  }
+  .modal p{font-size:14px;color:var(--ink-soft);margin-bottom:22px;line-height:1.55}
+  .modal input,.modal textarea{
+    width:100%;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);
+    padding:12px 14px;border:1px solid var(--line);border-radius:6px;background:var(--bg);
+    margin-bottom:12px;transition:border-color .25s;
+    resize:vertical;
+  }
+  .modal input:focus,.modal textarea:focus{outline:none;border-color:var(--ink)}
+  .modal textarea{min-height:90px}
+  .modal .form-err{font-size:12px;color:#c2410c;margin:-4px 0 12px}
+  .modal .btn.primary{margin-top:8px}
+  .sent-block{text-align:center}
+
   /* ============================== */
   /* Agentic touches                */
   /* ============================== */
