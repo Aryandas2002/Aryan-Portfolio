@@ -199,36 +199,72 @@ export default function App() {
         <div className="blob b1" aria-hidden="true"></div>
         <div className="blob b2" aria-hidden="true"></div>
         <div className="meta">Automations · CX Systems · India</div>
-        <h1>
-          <span className="word"><span style={{ animationDelay: '.1s' }}>Automation&nbsp;</span></span>
-          <span className="word"><span style={{ animationDelay: '.22s' }}>specialist&nbsp;</span></span>
-          <span className="word"><span style={{ animationDelay: '.34s' }}>building&nbsp;</span></span><br />
-          <span className="word"><span style={{ animationDelay: '.46s' }}><em>operational</em>&nbsp;</span></span>
-          <span className="word"><span style={{ animationDelay: '.58s' }}>leverage&nbsp;</span></span>
-          <span className="word"><span style={{ animationDelay: '.7s' }}>for&nbsp;</span></span>
-          <span className="word"><span style={{ animationDelay: '.82s' }}>CX&nbsp;teams.</span></span>
-        </h1>
-        <p className="lead">
-          I'm Aryan Das — currently leading internal automations at <b>Ultrahuman</b>, previously
-          in Product Experience at <b>Atlys</b>. I design and ship the internal tools, QA bots and
-          reporting systems that help customer support orgs scale without losing quality.
-        </p>
-        <div className="cta-row">
-          <a href="#work" className="btn primary" onClick={smoothScroll}>
-            <span>View work</span> <span className="arrow">→</span>
-          </a>
-          <a href="#contact" className="btn ghost" onClick={smoothScroll}>
-            <span>Get in touch</span> <span className="arrow">→</span>
-          </a>
-        </div>
 
-        <div className="stats">
-          {STATS.map((s, i) => (
-            <div className="stat" key={i}>
-              <div className="num" data-target={s.target} data-suffix={s.suffix}>0</div>
-              <div className="lbl">{s.label}</div>
+        <div className="hero-grid">
+          <div>
+            <h1>
+              <span className="word"><span style={{ animationDelay: '.1s' }}>Automation&nbsp;</span></span>
+              <span className="word"><span style={{ animationDelay: '.22s' }}>specialist&nbsp;</span></span>
+              <span className="word"><span style={{ animationDelay: '.34s' }}>building&nbsp;</span></span><br />
+              <span className="word"><span style={{ animationDelay: '.46s' }}><em>operational</em>&nbsp;</span></span>
+              <span className="word"><span style={{ animationDelay: '.58s' }}>leverage&nbsp;</span></span>
+              <span className="word"><span style={{ animationDelay: '.7s' }}>for&nbsp;</span></span>
+              <span className="word"><span style={{ animationDelay: '.82s' }}>CX&nbsp;teams.</span></span>
+            </h1>
+            <p className="lead">
+              I'm Aryan Das — currently leading internal automations at <b>Ultrahuman</b>, previously
+              in Product Experience at <b>Atlys</b>. I design and ship the internal tools, QA bots and
+              reporting systems that help customer support orgs scale without losing quality.
+            </p>
+            <div className="cta-row">
+              <a href="#work" className="btn primary" onClick={smoothScroll}>
+                <span>View work</span> <span className="arrow">→</span>
+              </a>
+              <a href="#contact" className="btn ghost" onClick={smoothScroll}>
+                <span>Get in touch</span> <span className="arrow">→</span>
+              </a>
             </div>
-          ))}
+          </div>
+
+          <div className="right">
+            <div className="available-card">
+              <div className="left">
+                <span className="pulse"></span>
+                <div>
+                  <div className="label">Status</div>
+                  <div className="status">Open to projects</div>
+                </div>
+              </div>
+              <div className="year">'26</div>
+            </div>
+
+            <div className="stats">
+              {STATS.map((s, i) => (
+                <div className="stat" key={i}>
+                  <div className="num" data-target={s.target} data-suffix={s.suffix}>0</div>
+                  <div className="lbl">{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="focus-card">
+              <div className="label">Currently shipping</div>
+              <div className="focus-row">
+                <div className="co-mark"><img src={ULTRAHUMAN} alt="Ultrahuman" /></div>
+                <div>
+                  <div className="role">Automations</div>
+                  <div className="at">Ultrahuman · Jun 2025 → Present</div>
+                </div>
+              </div>
+              <div className="focus-row">
+                <div className="co-mark light"><img src={ATLYS} alt="Atlys" /></div>
+                <div>
+                  <div className="role">Product Experience</div>
+                  <div className="at">Atlys · Nov 2024 → May 2025</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="scroll-hint">Scroll <span className="line"></span></div>
