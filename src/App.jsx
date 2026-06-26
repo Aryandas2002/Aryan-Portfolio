@@ -37,6 +37,7 @@ const PROJECTS = [
     sub: 'CRM platform',
     body: 'Internal ticket-handling CRM purpose-built for the CX team. Centralized data metrics, agent workflows and member context in one calm console.',
     tags: ['CRM', 'Data Metrics', 'CX Ops'],
+    status: 'live',
   },
   {
     n: '02',
@@ -44,6 +45,7 @@ const PROJECTS = [
     sub: 'ticket auditing',
     body: 'Automated quality-control bot auditing tickets at scale — flagging tone, SLA breaches and resolution quality so QA stops sampling and starts improving.',
     tags: ['Automation', 'QA', 'LLM'],
+    status: 'running',
   },
   {
     n: '03',
@@ -51,6 +53,7 @@ const PROJECTS = [
     sub: 'hourly & daily',
     body: 'Per-agent ticket activity reported hourly and daily. Made the entire team operationally functional day-to-day with zero manual chasing of numbers.',
     tags: ['Reporting', 'Cron', 'Slack'],
+    status: 'running',
   },
   {
     n: '04',
@@ -58,6 +61,7 @@ const PROJECTS = [
     sub: 'LMS platform',
     body: 'Co-built Codex, an internal LMS housing every SOP and document in one searchable place. Added quizzes so onboarding feels like leveling up.',
     tags: ['LMS', 'SOPs', 'Gamified'],
+    status: 'live',
   },
   {
     n: '05',
@@ -65,6 +69,7 @@ const PROJECTS = [
     sub: 'visa scanning',
     body: 'Rebuilt the OCR pipeline used to scan and parse traveler visa documents at Atlys. Shipped to production with over 90% accuracy, cutting manual verification time and reducing downstream errors.',
     tags: ['OCR', 'Document AI', 'Atlys'],
+    status: 'shipped',
   },
 ];
 
@@ -264,6 +269,29 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+            <div className="agent-card" aria-hidden="true">
+              <div className="top">
+                <span className="d r"></span><span className="d y"></span><span className="d g"></span>
+                <span className="title">agent.run</span>
+              </div>
+              <div className="row ok">
+                <span className="p">›</span>
+                <span className="v">qc_bot <span className="k">// auditing tickets</span></span>
+              </div>
+              <div className="row ok">
+                <span className="p">›</span>
+                <span className="v">ticket_logger <span className="k">// hourly sync</span></span>
+              </div>
+              <div className="row ok">
+                <span className="p">›</span>
+                <span className="v">codex_lms <span className="k">// 24 SOPs indexed</span></span>
+              </div>
+              <div className="row">
+                <span className="p">›</span>
+                <span className="v">listening<span className="blink"></span></span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -327,6 +355,9 @@ export default function App() {
                 <p>{p.body}</p>
               </div>
               <div className="tags">
+                <div className="status-row">
+                  <span className={`live-badge${p.status === 'shipped' ? ' archived' : ''}`}>{p.status}</span>
+                </div>
                 {p.tags.map((t) => <span key={t}>{t}</span>)}
               </div>
               <span className="arrow">→</span>
@@ -406,11 +437,6 @@ export default function App() {
             <b>Free 30-minute call.</b><br />
             No pitch, just a real conversation about your CX ops, automations or hiring.
           </div>
-          <a href="mailto:aryandaspvt@gmail.com?subject=Quick%20chat" className="book-btn">
-            <span className="dot-live"></span>
-            <span>Book a call</span>
-            <span className="arrow">→</span>
-          </a>
         </div>
       </section>
 
