@@ -40,7 +40,7 @@ const TESTIMONIALS = [
 const STATS = [
   { target: 10, suffix: '+', label: 'Tools shipped' },
   { target: 2, suffix: '', label: 'Companies' },
-  { target: 100, suffix: '', label: '% QC coverage · 60–70% accuracy' },
+  { target: 100, suffix: '', label: '% QC coverage · 70% accuracy' },
   { target: 24, suffix: '', label: '/7 reporting' },
 ];
 
@@ -78,7 +78,7 @@ const PROJECTS = [
     n: '02',
     title: 'QC Bot',
     sub: 'ticket auditing',
-    body: 'Automated quality-control bot auditing tickets at scale with 100% coverage and 60–70% accuracy — flagging tone, SLA breaches and resolution quality so QA stops sampling and starts improving.',
+    body: 'Automated quality-control bot auditing tickets at scale with 100% coverage and 70% accuracy — flagging tone, SLA breaches and resolution quality so QA stops sampling and starts improving.',
     tags: ['Automation', 'QA', 'LLM'],
     status: 'running',
   },
