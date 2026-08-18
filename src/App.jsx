@@ -697,7 +697,7 @@ export default function App() {
             <h5>Connect</h5>
             <ul>
               <li><a href="mailto:aryandaspvt@gmail.com">Email <span className="ext">↗</span></a></li>
-              <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn <span className="ext">↗</span></a></li>
+              <li><a href="https://www.linkedin.com/in/das-aryan/" target="_blank" rel="noopener">LinkedIn <span className="ext">↗</span></a></li>
               <li><a href="https://github.com/Aryandas2002" target="_blank" rel="noopener">GitHub <span className="ext">↗</span></a></li>
             </ul>
           </div>
