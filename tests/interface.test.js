@@ -10,6 +10,7 @@ before(async () => {
   for (const key of ['window', 'document', 'HTMLElement', 'FormData', 'Event', 'MouseEvent', 'KeyboardEvent']) {
     globalThis[key] = dom.window[key];
   }
+  Object.defineProperty(globalThis, 'navigator', { value: dom.window.navigator, configurable: true });
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   // Load ReactDOM only after the DOM exists, so it detects modern input events.
   ({ createRoot } = await import('react-dom/client'));
