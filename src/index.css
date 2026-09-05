@@ -879,3 +879,50 @@
   .focus-card .co-mark.light{background:#fff;border:1px solid var(--line)}
 
   .hero p.lead{max-width:520px}
+
+/* Navigation and keyboard access */
+.logo{color:var(--ink);text-decoration:none}
+.nav-links{gap:24px;align-items:center}
+.nav-resume{border:1px solid var(--ink);border-radius:999px;padding:8px 14px}
+.menu-toggle{display:none;font:inherit;color:var(--ink);background:transparent;border:1px solid var(--ink);border-radius:6px;padding:8px 12px}
+.skip-link{position:fixed;top:8px;left:8px;z-index:300;background:var(--ink);color:var(--bg);padding:12px;transform:translateY(-160%)}
+.skip-link:focus{transform:none}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+@media(max-width:960px){
+  .menu-toggle{display:block}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg);padding:20px 6vw;border-bottom:1px solid var(--line);max-height:calc(100dvh - 86px);overflow-y:auto}
+  .nav-links.is-open{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+  .nav-links a{padding:12px;font-size:15px}
+}
+
+/* Keep the technology list in Skills; equal groups make the loop seamless. */
+.tools-heading{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin-top:48px}
+.logo-track{gap:0}
+.logo-group{display:flex;align-items:center;gap:110px;padding-right:110px;flex-shrink:0}
+@media(max-width:680px){
+  .skill:nth-child(2n){padding-left:0;border-left:none}
+  .skill:nth-child(2n):hover{padding-left:16px}
+}
+
+/* Native dialog provides Escape, focus containment, and an inert background. */
+dialog.modal{margin:auto;border:1px solid var(--line);max-height:calc(100dvh - 32px);max-width:min(480px,calc(100vw - 32px));overflow-y:auto}
+dialog.modal::backdrop{background:rgba(15,15,18,.55);backdrop-filter:blur(6px)}
+.modal fieldset{border:0;min-width:0}
+.modal label{display:block;font-size:13px;margin-bottom:6px}
+.modal .consent{display:flex;gap:10px;align-items:flex-start}
+.modal .consent input{width:auto;margin:4px 0 0;flex-shrink:0}
+.modal .form-err{margin:16px 0 0}
+.modal .form-contact{margin:18px 0 0;font-size:13px}
+.modal a{color:var(--ink)}
+.form-honeypot{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@media(max-width:480px){dialog.modal{padding:44px 20px 24px}}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal,.hero h1 .word span,.contact-cta h2 .reveal-word span{opacity:1;transform:none}
+  .tools-wrap{width:100%;left:auto;margin-left:0}
+  .tools-wrap::before,.tools-wrap::after{display:none}
+  .logo-track{width:100%;transform:none}
+  .logo-group{width:100%;flex-wrap:wrap;gap:24px;padding:0;justify-content:center}
+  .logo-group[aria-hidden="true"]{display:none}
+}

@@ -2,40 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { TOOLS } from './tools.js';
 import { ULTRAHUMAN, ATLYS } from './companies.js';
 
-// Change this to control who can submit a testimonial
-const TESTIMONIAL_PASS = 'aryan2025';
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqevqyqq';
-
-// JSONBin (live testimonial storage)
-// NOTE: This master key is bundled into client-side JS and visible in the source.
-// For better security, replace with a bin-scoped Access Key from the JSONBin dashboard.
-const JSONBIN_BIN_ID = '6a3ee8dff5f4af5e293636c9';
-const JSONBIN_KEY = '$2a$10$Pkd5HAjY4OOPgv.t9kQmL.rpEfUd12xBcapjg6YN6YFQv5opMQQHO';
-const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
-
-const TESTIMONIALS = [
-  {
-    quote: "Aryan rebuilt our QC pipeline from scratch — what used to take a manager half a day now runs in the background. He thinks like ops, ships like an engineer.",
-    name: 'Add yours',
-    role: 'Add yours',
-    company: 'Add yours',
-    placeholder: true,
-  },
-  {
-    quote: "The Codex LMS he co-built is the first internal docs system our new hires actually open on day one. Quizzes were a small touch that completely changed onboarding.",
-    name: 'Add yours',
-    role: 'Add yours',
-    company: 'Add yours',
-    placeholder: true,
-  },
-  {
-    quote: "Drop in, find the gap, ship the fix. Three weeks in and our ticket logger was running hourly — we stopped chasing numbers and started running the team.",
-    name: 'Add yours',
-    role: 'Add yours',
-    company: 'Add yours',
-    placeholder: true,
-  },
-];
+import TestimonialDialog from './TestimonialDialog.jsx';
+import { APPROVED_TESTIMONIALS } from './testimonials.js';
 
 const STATS = [
   { target: 10, suffix: '+', label: 'Tools shipped' },
@@ -120,101 +88,8 @@ const SKILLS = [
 export default function App() {
   const scrollBarRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-  const [step, setStep] = useState('pass'); // 'pass' | 'form' | 'sent'
-  const [pass, setPass] = useState('');
-  const [passError, setPassError] = useState('');
-  const [form, setForm] = useState({ name: '', role: '', company: '', quote: '' });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-  const [liveTestimonials, setLiveTestimonials] = useState([]);
-
-  // Fetch live testimonials from JSONBin on mount
-  useEffect(() => {
-    fetch(`${JSONBIN_URL}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY },
-    })
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => {
-        const list = data?.record?.testimonials;
-        if (Array.isArray(list)) setLiveTestimonials(list);
-      })
-      .catch(() => {});
-  }, []);
-
-  const submitPass = (e) => {
-    e.preventDefault();
-    if (pass.trim().toLowerCase() === TESTIMONIAL_PASS.toLowerCase()) {
-      setPassError('');
-      setStep('form');
-    } else {
-      setPassError('Hmm, that code didn\'t match. Ask Aryan for it.');
-    }
-  };
-
-  const submitForm = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setSubmitError('');
-
-    const entry = {
-      quote: form.quote.trim(),
-      name: form.name.trim(),
-      role: form.role.trim(),
-      company: form.company.trim(),
-      submittedAt: new Date().toISOString(),
-    };
-
-    try {
-      // 1. Read current testimonials from JSONBin
-      const readRes = await fetch(`${JSONBIN_URL}/latest`, {
-        headers: { 'X-Master-Key': JSONBIN_KEY },
-      });
-      if (!readRes.ok) throw new Error('read failed');
-      const readData = await readRes.json();
-      const current = Array.isArray(readData?.record?.testimonials)
-        ? readData.record.testimonials
-        : [];
-
-      // 2. Append new entry and write back
-      const updated = [...current, entry];
-      const writeRes = await fetch(JSONBIN_URL, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': JSONBIN_KEY,
-        },
-        body: JSON.stringify({ testimonials: updated }),
-      });
-      if (!writeRes.ok) throw new Error('write failed');
-
-      // 3. Fire-and-forget Formspree notification (so Aryan gets an email too)
-      fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          ...entry,
-          _subject: `Testimonial from ${entry.name} (${entry.company})`,
-        }),
-      }).catch(() => {});
-
-      // 4. Update local state so it appears on the page immediately
-      setLiveTestimonials(updated);
-      setStep('sent');
-    } catch (err) {
-      setSubmitError("Couldn't save that — try again in a moment.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setTimeout(() => {
-      setStep('pass'); setPass(''); setPassError('');
-      setForm({ name: '', role: '', company: '', quote: '' });
-      setSubmitError(''); setSubmitting(false);
-    }, 300);
-  };
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
 
   // Reveal-on-scroll observer
   useEffect(() => {
@@ -230,54 +105,41 @@ export default function App() {
     return () => io.disconnect();
   }, []);
 
-  // Looping counter animations — restart every ~7s while visible
+  // Count once when visible; respect reduced-motion preferences.
   useEffect(() => {
-    const visible = new Set();
-    const timers = new Map();
-
-    const runOnce = (el) => {
-      const target = +el.dataset.target;
-      const suffix = el.dataset.suffix || '';
-      const dur = 1400;
-      const start = performance.now();
-      const tick = (t) => {
-        const p = Math.min((t - start) / dur, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        const n = Math.round(target * eased);
-        el.textContent = n + (p >= 1 ? suffix : '');
-        if (p < 1 && visible.has(el)) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-
-    const scheduleLoop = (el) => {
-      runOnce(el);
-      const id = setInterval(() => {
-        if (visible.has(el)) runOnce(el);
-      }, 7000);
-      timers.set(el, id);
-    };
-
+    const frames = new Set();
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        const el = e.target;
-        if (e.isIntersecting) {
-          if (!visible.has(el)) {
-            visible.add(el);
-            scheduleLoop(el);
-          }
-        } else {
-          visible.delete(el);
-          const id = timers.get(el);
-          if (id) { clearInterval(id); timers.delete(el); }
+      entries.forEach(({ target: el, isIntersecting }) => {
+        if (!isIntersecting) return;
+        io.unobserve(el);
+        const target = Number(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        if (reducedMotion) {
+          el.textContent = target + suffix;
+          return;
         }
+        let start;
+        const tick = (time) => {
+          if (start === undefined) start = time;
+          const progress = Math.max(0, Math.min((time - start) / 1400, 1));
+          el.textContent = Math.round(target * (1 - Math.pow(1 - progress, 3))) + (progress === 1 ? suffix : '');
+          if (progress < 1) schedule(tick);
+        };
+        const schedule = (callback) => {
+          const id = requestAnimationFrame((time) => {
+            frames.delete(id);
+            callback(time);
+          });
+          frames.add(id);
+        };
+        schedule(tick);
       });
     }, { threshold: 0.4 });
-
-    document.querySelectorAll('.num[data-target]').forEach((c) => io.observe(c));
+    document.querySelectorAll('.num[data-target]').forEach((el) => io.observe(el));
     return () => {
       io.disconnect();
-      timers.forEach((id) => clearInterval(id));
+      frames.forEach(cancelAnimationFrame);
     };
   }, []);
 
@@ -285,15 +147,18 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       const h = document.documentElement;
-      const p = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+      const distance = h.scrollHeight - h.clientHeight;
+      const p = distance > 0 ? h.scrollTop / distance * 100 : 0;
       if (scrollBarRef.current) scrollBarRef.current.style.width = p + '%';
     };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Magnetic buttons
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const btns = document.querySelectorAll('.btn,.book-btn');
     const handlers = [];
     btns.forEach((btn) => {
@@ -316,6 +181,7 @@ export default function App() {
 
   // Hero parallax on mouse
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const h1 = document.querySelector('.hero h1');
     const onMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 8;
@@ -326,17 +192,8 @@ export default function App() {
     return () => document.removeEventListener('mousemove', onMove);
   }, []);
 
-  // Smooth scroll on hash links
-  const smoothScroll = (e) => {
-    const href = e.currentTarget.getAttribute('href');
-    if (href && href.startsWith('#') && href.length > 1) {
-      const el = document.querySelector(href);
-      if (el) {
-        e.preventDefault();
-        window.scrollTo({ top: el.offsetTop - 70, behavior: 'smooth' });
-      }
-    }
-  };
+  // Native anchors preserve URL hashes, focus, and browser history.
+  const closeMenu = () => setMenuOpen(false);
 
   const year = new Date().getFullYear();
 
@@ -344,21 +201,31 @@ export default function App() {
     <>
       <div className="scroll-bar" ref={scrollBarRef} />
 
-      <nav>
-        <div className="logo">Aryan<span className="dot"></span></div>
-        <div className="nav-links">
-          <a href="#about" onClick={smoothScroll}>About</a>
-          <a href="#experience" onClick={smoothScroll}>Experience</a>
-          <a href="#tools" onClick={smoothScroll}>Tools</a>
-          <a href="#work" onClick={smoothScroll}>Work</a>
-          <a href="#testimonials" onClick={smoothScroll}>Testimonials</a>
-          <a href="#skills" onClick={smoothScroll}>Skills</a>
-          <a href="#resume" onClick={smoothScroll}>Résumé</a>
-          <a href="#contact" onClick={smoothScroll}>Contact</a>
+      <a className="skip-link" href="#about">Skip to content</a>
+      <nav aria-label="Main navigation" onKeyDown={(event) => {
+        if (event.key === 'Escape' && menuOpen) {
+          setMenuOpen(false);
+          menuButtonRef.current?.focus();
+        }
+      }}>
+        <a className="logo" href="#about" onClick={closeMenu}>Aryan<span className="dot" /></a>
+        <button ref={menuButtonRef} className="menu-toggle" type="button"
+          aria-expanded={menuOpen} aria-controls="main-navigation"
+          onClick={() => setMenuOpen((open) => !open)}>
+          {menuOpen ? 'Close menu' : 'Menu'}
+        </button>
+        <div id="main-navigation" className={`nav-links${menuOpen ? ' is-open' : ''}`}>
+          <a href="#about" onClick={closeMenu}>About</a>
+          <a href="#experience" onClick={closeMenu}>Experience</a>
+          <a href="#work" onClick={closeMenu}>Work</a>
+          <a href="#skills" onClick={closeMenu}>Skills &amp; Tools</a>
+          <a href="#contact" onClick={closeMenu}>Contact</a>
+          <a href={`${import.meta.env.BASE_URL}resume.html`} className="nav-resume"
+            target="_blank" rel="noopener noreferrer" onClick={closeMenu}>View résumé ↗</a>
         </div>
       </nav>
 
-      <section className="hero" id="about">
+      <section className="hero" id="about" tabIndex={-1}>
         <div className="blob b1" aria-hidden="true"></div>
         <div className="blob b2" aria-hidden="true"></div>
         <div className="meta">Automations · CX Systems · India</div>
@@ -380,10 +247,10 @@ export default function App() {
               reporting systems that help customer support orgs scale without losing quality.
             </p>
             <div className="cta-row">
-              <a href="#work" className="btn primary" onClick={smoothScroll}>
+              <a href="#work" className="btn primary" onClick={closeMenu}>
                 <span>View work</span> <span className="arrow">→</span>
               </a>
-              <a href="#contact" className="btn ghost" onClick={smoothScroll}>
+              <a href="#contact" className="btn ghost" onClick={closeMenu}>
                 <span>Get in touch</span> <span className="arrow">→</span>
               </a>
             </div>
@@ -398,7 +265,7 @@ export default function App() {
                   <div className="status">Open to projects</div>
                 </div>
               </div>
-              <div className="year">'26</div>
+              <div className="year">'{String(year).slice(-2)}</div>
             </div>
 
             <div className="stats">
@@ -411,7 +278,7 @@ export default function App() {
             </div>
 
             <div className="focus-card">
-              <div className="label">Currently shipping</div>
+              <div className="label">Career snapshot</div>
               <div className="focus-row">
                 <div className="co-mark"><img src={ULTRAHUMAN} alt="Ultrahuman" /></div>
                 <div>
@@ -456,7 +323,7 @@ export default function App() {
         <div className="scroll-hint">Scroll <span className="line"></span></div>
       </section>
 
-      <section id="experience">
+      <section id="experience" tabIndex={-1}>
         <div className="section-head reveal">
           <span className="num">01 —</span>
           <h2>Experience, <em>in brief</em>.</h2>
@@ -481,27 +348,9 @@ export default function App() {
         </div>
       </section>
 
-      <section id="tools" style={{ paddingBottom: 60 }}>
-        <div className="section-head reveal" style={{ marginBottom: 24 }}>
-          <span className="num">02 —</span>
-          <h2>Tools I <em>work with</em>.</h2>
-        </div>
-      </section>
-
-      <div className="tools-wrap reveal">
-        <div className="logo-track">
-          {[...TOOLS, ...TOOLS].map((t, i) => (
-            <div className="logo-item" key={i}>
-              <span dangerouslySetInnerHTML={{ __html: t.svg }} />
-              <div className="ll">{t.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <section id="work">
+      <section id="work" tabIndex={-1}>
         <div className="section-head reveal">
-          <span className="num">03 —</span>
+          <span className="num">02 —</span>
           <h2>Selected <em>work</em>.</h2>
         </div>
         <div className="projects">
@@ -518,94 +367,36 @@ export default function App() {
                 </div>
                 {p.tags.map((t) => <span key={t}>{t}</span>)}
               </div>
-              <span className="arrow">→</span>
             </div>
           ))}
         </div>
       </section>
 
-      <section id="testimonials">
-        <div className="section-head reveal">
-          <span className="num">04 —</span>
-          <h2>Kind <em>words</em>.</h2>
-        </div>
-        <div className="testimonials-grid">
-          {(liveTestimonials.length > 0 ? liveTestimonials : TESTIMONIALS).map((t, i) => {
-            // Live testimonials load AFTER the reveal IntersectionObserver runs,
-            // so bake the `in` class onto them so they're always visible
-            const isLive = liveTestimonials.length > 0;
-            return (
-              <figure className={`tcard reveal${isLive ? ' in' : ''}${i ? ' d' + Math.min(i, 3) : ''}${t.placeholder ? ' placeholder' : ''}`} key={t.submittedAt || i}>
-                <div className="quote-mark">“</div>
-                <blockquote>{t.quote}</blockquote>
+      {APPROVED_TESTIMONIALS.length > 0 && (
+        <section id="testimonials" aria-labelledby="testimonials-title">
+          <div className="section-head reveal">
+            <h2 id="testimonials-title">Kind <em>words</em>.</h2>
+          </div>
+          <div className="testimonials-grid">
+            {APPROVED_TESTIMONIALS.map((testimonial) => (
+              <figure className="tcard reveal" key={testimonial.id}>
+                <blockquote>{testimonial.quote}</blockquote>
                 <figcaption>
-                  <div className="t-name">{t.name}</div>
-                  <div className="t-role">{t.role}{t.company && t.company !== t.role && ` · ${t.company}`}</div>
+                  <div className="t-name">{testimonial.name}</div>
+                  <div className="t-role">{[testimonial.role, testimonial.company].filter(Boolean).join(' · ')}</div>
                 </figcaption>
               </figure>
-            );
-          })}
-        </div>
-        <div className="testimonial-cta reveal">
-          <span>Worked with me?</span>
-          <button className="btn ghost" onClick={() => setShowModal(true)}>
-            <span>Share a testimonial</span> <span className="arrow">→</span>
-          </button>
-        </div>
-      </section>
-
-      {showModal && (
-        <div className="modal-backdrop" onClick={closeModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal} aria-label="Close">×</button>
-            {step === 'pass' && (
-              <form onSubmit={submitPass}>
-                <div className="modal-eyebrow">Invite-only</div>
-                <h3>Got a share code?</h3>
-                <p>Testimonials are gated to people I've actually worked with. Ask Aryan for the code, then paste it below.</p>
-                <input
-                  type="text"
-                  value={pass}
-                  onChange={(e) => setPass(e.target.value)}
-                  placeholder="share code"
-                  autoFocus
-                />
-                {passError && <div className="form-err">{passError}</div>}
-                <button type="submit" className="btn primary"><span>Continue</span> <span className="arrow">→</span></button>
-              </form>
-            )}
-            {step === 'form' && (
-              <form onSubmit={submitForm}>
-                <div className="modal-eyebrow">Almost there</div>
-                <h3>Tell me what worked.</h3>
-                <p>I'll review and add approved ones to the site. Your submission goes straight to my inbox — nothing is shared publicly without your name attached.</p>
-                <input required disabled={submitting} placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                <input required disabled={submitting} placeholder="Your role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
-                <input required disabled={submitting} placeholder="Company" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
-                <textarea required disabled={submitting} rows="4" placeholder="What did we build / fix together?" value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} />
-                {submitError && <div className="form-err">{submitError}</div>}
-                <button type="submit" className="btn primary" disabled={submitting}>
-                  <span>{submitting ? 'Sending…' : 'Send'}</span>
-                  {!submitting && <span className="arrow">→</span>}
-                </button>
-              </form>
-            )}
-            {step === 'sent' && (
-              <div className="sent-block">
-                <div className="modal-eyebrow">Received ✓</div>
-                <h3>Got it — thanks for the kind words.</h3>
-                <p>Your testimonial landed in my inbox. I'll review and add it to the site shortly. Appreciate it.</p>
-                <button className="btn primary" onClick={closeModal}><span>Done</span></button>
-              </div>
-            )}
+            ))}
           </div>
-        </div>
+        </section>
       )}
 
-      <section id="skills">
+      {showModal && <TestimonialDialog onClose={() => setShowModal(false)} />}
+
+      <section id="skills" tabIndex={-1}>
         <div className="section-head reveal">
-          <span className="num">05 —</span>
-          <h2>What I <em>bring</em>.</h2>
+          <span className="num">03 —</span>
+          <h2>Skills &amp; <em>tools</em>.</h2>
         </div>
         <div className="skills-grid">
           {SKILLS.map((s, i) => (
@@ -615,42 +406,24 @@ export default function App() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section id="resume">
-        <div className="section-head reveal">
-          <span className="num">06 —</span>
-          <h2>Résumé.</h2>
-        </div>
-        <div className="resume-block reveal">
-          <div>
-            <h3>The full story, <em>on one page.</em></h3>
-            <p>A clean, ATS-friendly résumé — no graphics, no parsing surprises. Reviewed by recruiters, opened by hiring managers.</p>
-            <div className="actions">
-              <a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener" className="btn primary">
-                <span>Download résumé</span> <span className="arrow">↓</span>
-              </a>
-              <a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener" className="btn ghost">
-                <span>Preview in new tab</span> <span className="arrow">→</span>
-              </a>
-            </div>
-          </div>
-          <div className="resume-preview" aria-hidden="true">
-            <div className="rp-head">Aryan Das</div>
-            <div className="rp-sub">Automation Specialist · CX</div>
-            <div className="rp-label">Experience</div>
-            <div className="rp-line med" /><div className="rp-line short" />
-            <div className="rp-line" /><div className="rp-line med" /><div className="rp-line short" />
-            <div className="rp-label">Skills</div>
-            <div className="rp-line" /><div className="rp-line med" />
-            <div className="rp-label">Education</div>
-            <div className="rp-line med" /><div className="rp-line short" />
-            <div className="watermark" />
+        <h3 className="tools-heading">Tools I work with</h3>
+        <div className="tools-wrap">
+          <div className="logo-track">
+            {[0, 1].map((copy) => (
+              <div className="logo-group" key={copy} aria-hidden={copy === 1 ? true : undefined}>
+                {TOOLS.map((tool) => (
+                  <div className="logo-item" key={tool.label}>
+                    <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: tool.svg }} />
+                    <div className="ll">{tool.label}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="contact" className="contact-cta reveal">
+      <section id="contact" className="contact-cta reveal" tabIndex={-1}>
         <span className="small">Get in touch</span>
         <h2>
           <span className="reveal-word"><span>Still&nbsp;</span></span>
@@ -670,9 +443,15 @@ export default function App() {
 
         <div className="row-meta">
           <div className="left">
-            <b>Free 30-minute call.</b><br />
-            No pitch, just a real conversation about your CX ops, automations or hiring.
+            <b>Discuss a project or role.</b><br />
+            Email me about your CX operations, automation needs, or hiring plans.
           </div>
+        </div>
+        <div className="testimonial-cta">
+          <span>Worked with me?</span>
+          <button className="btn ghost" type="button" onClick={() => setShowModal(true)}>
+            Share a testimonial →
+          </button>
         </div>
       </section>
 
@@ -686,10 +465,10 @@ export default function App() {
           <div className="foot-col">
             <h5>Navigate</h5>
             <ul>
-              <li><a href="#about" onClick={smoothScroll}>About</a></li>
-              <li><a href="#experience" onClick={smoothScroll}>Experience</a></li>
-              <li><a href="#work" onClick={smoothScroll}>Work</a></li>
-              <li><a href="#tools" onClick={smoothScroll}>Tools</a></li>
+              <li><a href="#about" onClick={closeMenu}>About</a></li>
+              <li><a href="#experience" onClick={closeMenu}>Experience</a></li>
+              <li><a href="#work" onClick={closeMenu}>Work</a></li>
+              <li><a href="#skills" onClick={closeMenu}>Skills &amp; Tools</a></li>
             </ul>
           </div>
 
@@ -706,7 +485,7 @@ export default function App() {
             <h5>Resources</h5>
             <ul>
               <li><a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener">Résumé <span className="ext">↗</span></a></li>
-              <li><a href="#contact" onClick={smoothScroll}>Book a call</a></li>
+              <li><a href="#contact" onClick={closeMenu}>Get in touch</a></li>
             </ul>
           </div>
         </div>
