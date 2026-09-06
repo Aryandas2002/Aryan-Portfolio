@@ -82,6 +82,14 @@ const PROJECTS = [
     tags: ['CRM', 'GitHub Workflows', 'Leave Tracking'],
     status: 'internal',
   },
+  {
+    n: '07',
+    title: 'Roster Automation',
+    sub: 'Console CRM',
+    body: 'Replaced Google Sheets-based rostering with a workflow inside Console CRM. Associates log week-off preferences and leave requests, with configurable caps and staffing coverage settings aligned to business requirements.',
+    tags: ['Scheduling', 'Leave Management', 'Coverage Planning'],
+    status: 'internal',
+  },
 ];
 
 const SKILLS = [
