@@ -105,40 +105,63 @@ export default function App() {
     return () => io.disconnect();
   }, []);
 
-  // Count once when visible; respect reduced-motion preferences.
+  // Looping counter animations — keep the original repeating stat motion.
   useEffect(() => {
+    const visible = new Set();
+    const timers = new Map();
     const frames = new Set();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const runOnce = (el) => {
+      const target = Number(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      if (reducedMotion) {
+        el.textContent = target + suffix;
+        return;
+      }
+      const duration = 1400;
+      const started = performance.now();
+      const tick = (time) => {
+        const progress = Math.min((time - started) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased) + (progress >= 1 ? suffix : '');
+        if (progress < 1 && visible.has(el)) {
+          const id = requestAnimationFrame((next) => { frames.delete(id); tick(next); });
+          frames.add(id);
+        }
+      };
+      const id = requestAnimationFrame((time) => { frames.delete(id); tick(time); });
+      frames.add(id);
+    };
+
+    const startLoop = (el) => {
+      runOnce(el);
+      if (reducedMotion) return;
+      const id = setInterval(() => {
+        if (visible.has(el)) runOnce(el);
+      }, 7000);
+      timers.set(el, id);
+    };
+
     const io = new IntersectionObserver((entries) => {
       entries.forEach(({ target: el, isIntersecting }) => {
-        if (!isIntersecting) return;
-        io.unobserve(el);
-        const target = Number(el.dataset.target);
-        const suffix = el.dataset.suffix || '';
-        if (reducedMotion) {
-          el.textContent = target + suffix;
-          return;
+        if (isIntersecting) {
+          if (!visible.has(el)) {
+            visible.add(el);
+            startLoop(el);
+          }
+        } else {
+          visible.delete(el);
+          const id = timers.get(el);
+          if (id) { clearInterval(id); timers.delete(el); }
         }
-        let start;
-        const tick = (time) => {
-          if (start === undefined) start = time;
-          const progress = Math.max(0, Math.min((time - start) / 1400, 1));
-          el.textContent = Math.round(target * (1 - Math.pow(1 - progress, 3))) + (progress === 1 ? suffix : '');
-          if (progress < 1) schedule(tick);
-        };
-        const schedule = (callback) => {
-          const id = requestAnimationFrame((time) => {
-            frames.delete(id);
-            callback(time);
-          });
-          frames.add(id);
-        };
-        schedule(tick);
       });
     }, { threshold: 0.4 });
+
     document.querySelectorAll('.num[data-target]').forEach((el) => io.observe(el));
     return () => {
       io.disconnect();
+      timers.forEach(clearInterval);
       frames.forEach(cancelAnimationFrame);
     };
   }, []);
@@ -367,6 +390,7 @@ export default function App() {
                 </div>
                 {p.tags.map((t) => <span key={t}>{t}</span>)}
               </div>
+              <span className="arrow" aria-hidden="true">→</span>
             </div>
           ))}
         </div>

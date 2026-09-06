@@ -55,7 +55,7 @@ test('navigation retains native links and menu closes on selection and Escape', 
   assert.equal(document.querySelectorAll('nav a').length, 7); // Logo plus six destinations.
   assert.equal(document.querySelector('nav a[href$="resume.html"]').getAttribute('href'), '/Aryan-Portfolio/resume.html');
   assert.equal(document.querySelector('#testimonials'), null);
-  assert.equal(document.querySelector('.project .arrow'), null);
+  assert.ok(document.querySelector('.project .arrow'));
   assert.ok(document.querySelector('#skills .logo-track'));
 });
 
