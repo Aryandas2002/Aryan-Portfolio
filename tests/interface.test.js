@@ -52,9 +52,9 @@ test('navigation retains native links and menu closes on selection and Escape', 
   for (const anchor of document.querySelectorAll('a[href^="#"]')) {
     assert.ok(document.querySelector(anchor.getAttribute('href')), `Missing target for ${anchor.textContent}`);
   }
-  assert.equal(document.querySelectorAll('nav a').length, 7); // Logo plus six destinations.
+  assert.equal(document.querySelectorAll('nav a').length, 8); // Logo plus seven destinations.
   assert.equal(document.querySelector('nav a[href$="resume.html"]').getAttribute('href'), '/Aryan-Portfolio/resume.html');
-  assert.equal(document.querySelector('#testimonials'), null);
+  assert.equal(document.querySelectorAll('#testimonials figure').length, 5);
   assert.ok(document.querySelector('.project .arrow'));
   assert.ok(document.querySelector('#skills .logo-track'));
 });
@@ -76,7 +76,7 @@ test('dialog survives StrictMode and reports service failure before allowing ret
   globalThis.fetch = async () => ({ ok: true, json: async () => ({ ok: true }) });
   await act(async () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
   assert.match(document.querySelector('.sent-block').textContent, /Submitted for review/);
-  assert.equal(document.querySelector('#testimonials'), null);
+  assert.equal(document.querySelectorAll('#testimonials figure').length, 5);
   await act(async () => document.querySelector('.sent-block button').click());
   assert.equal(document.querySelector('dialog'), null);
 });

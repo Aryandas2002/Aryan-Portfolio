@@ -110,19 +110,14 @@ export default function App() {
     const visible = new Set();
     const timers = new Map();
     const frames = new Set();
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const runOnce = (el) => {
       const target = Number(el.dataset.target);
       const suffix = el.dataset.suffix || '';
-      if (reducedMotion) {
-        el.textContent = target + suffix;
-        return;
-      }
       const duration = 1400;
       const started = performance.now();
       const tick = (time) => {
-        const progress = Math.min((time - started) / duration, 1);
+        const progress = Math.max(0, Math.min((time - started) / duration, 1));
         const eased = 1 - Math.pow(1 - progress, 3);
         el.textContent = Math.round(target * eased) + (progress >= 1 ? suffix : '');
         if (progress < 1 && visible.has(el)) {
@@ -136,7 +131,6 @@ export default function App() {
 
     const startLoop = (el) => {
       runOnce(el);
-      if (reducedMotion) return;
       const id = setInterval(() => {
         if (visible.has(el)) runOnce(el);
       }, 7000);
@@ -181,7 +175,6 @@ export default function App() {
 
   // Magnetic buttons
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const btns = document.querySelectorAll('.btn,.book-btn');
     const handlers = [];
     btns.forEach((btn) => {
@@ -204,7 +197,6 @@ export default function App() {
 
   // Hero parallax on mouse
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const h1 = document.querySelector('.hero h1');
     const onMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 8;
@@ -241,6 +233,7 @@ export default function App() {
           <a href="#about" onClick={closeMenu}>About</a>
           <a href="#experience" onClick={closeMenu}>Experience</a>
           <a href="#work" onClick={closeMenu}>Work</a>
+          <a href="#testimonials" onClick={closeMenu}>Testimonials</a>
           <a href="#skills" onClick={closeMenu}>Skills &amp; Tools</a>
           <a href="#contact" onClick={closeMenu}>Contact</a>
           <a href={`${import.meta.env.BASE_URL}resume.html`} className="nav-resume"
@@ -397,13 +390,14 @@ export default function App() {
       </section>
 
       {APPROVED_TESTIMONIALS.length > 0 && (
-        <section id="testimonials" aria-labelledby="testimonials-title">
+        <section id="testimonials" tabIndex={-1} aria-labelledby="testimonials-title">
           <div className="section-head reveal">
             <h2 id="testimonials-title">Kind <em>words</em>.</h2>
           </div>
           <div className="testimonials-grid">
             {APPROVED_TESTIMONIALS.map((testimonial) => (
               <figure className="tcard reveal" key={testimonial.id}>
+                <div className="quote-mark" aria-hidden="true">“</div>
                 <blockquote>{testimonial.quote}</blockquote>
                 <figcaption>
                   <div className="t-name">{testimonial.name}</div>
@@ -431,7 +425,7 @@ export default function App() {
           ))}
         </div>
         <h3 className="tools-heading">Tools I work with</h3>
-        <div className="tools-wrap">
+        <div className="tools-wrap reveal">
           <div className="logo-track">
             {[0, 1].map((copy) => (
               <div className="logo-group" key={copy} aria-hidden={copy === 1 ? true : undefined}>
@@ -443,6 +437,36 @@ export default function App() {
                 ))}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="resume" tabIndex={-1}>
+        <div className="section-head reveal">
+          <span className="num">04 —</span>
+          <h2>Résumé.</h2>
+        </div>
+        <div className="resume-block reveal">
+          <div>
+            <h3>The full story, <em>on one page.</em></h3>
+            <p>View my résumé and use your browser’s print option to save a PDF.</p>
+            <div className="actions">
+              <a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener" className="btn primary">
+                <span>View résumé</span> <span className="arrow">↗</span>
+              </a>
+            </div>
+          </div>
+          <div className="resume-preview" aria-hidden="true">
+            <div className="rp-head">Aryan Das</div>
+            <div className="rp-sub">Automation Specialist · CX</div>
+            <div className="rp-label">Experience</div>
+            <div className="rp-line med" /><div className="rp-line short" />
+            <div className="rp-line" /><div className="rp-line med" /><div className="rp-line short" />
+            <div className="rp-label">Skills</div>
+            <div className="rp-line" /><div className="rp-line med" />
+            <div className="rp-label">Education</div>
+            <div className="rp-line med" /><div className="rp-line short" />
+            <div className="watermark" />
           </div>
         </div>
       </section>

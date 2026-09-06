@@ -916,13 +916,3 @@ dialog.modal::backdrop{background:rgba(15,15,18,.55);backdrop-filter:blur(6px)}
 .modal a{color:var(--ink)}
 .form-honeypot{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 @media(max-width:480px){dialog.modal{padding:44px 20px 24px}}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .reveal,.hero h1 .word span,.contact-cta h2 .reveal-word span{opacity:1;transform:none}
-  .tools-wrap{width:100%;left:auto;margin-left:0}
-  .tools-wrap::before,.tools-wrap::after{display:none}
-  .logo-track{width:100%;transform:none}
-  .logo-group{width:100%;flex-wrap:wrap;gap:24px;padding:0;justify-content:center}
-  .logo-group[aria-hidden="true"]{display:none}
-}
