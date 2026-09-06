@@ -334,6 +334,13 @@ export default function App() {
                   <div className="at">Atlys · Nov 2024 → May 2025</div>
                 </div>
               </div>
+              <div className="focus-row">
+                <div className="co-mark"><img src={LETS_GAME_NOW} alt="Lets GameNow" /></div>
+                <div>
+                  <div className="role">League Operations Executive</div>
+                  <div className="at">Lets GameNow · Jun 2022 → Jul 2023</div>
+                </div>
+              </div>
             </div>
 
             <div className="agent-card" aria-hidden="true">
