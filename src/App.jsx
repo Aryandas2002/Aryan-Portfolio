@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { TOOLS } from './tools.js';
-import { ULTRAHUMAN, ATLYS } from './companies.js';
+import { ULTRAHUMAN, ATLYS, LETS_GAME_NOW } from './companies.js';
 
 import TestimonialDialog from './TestimonialDialog.jsx';
 import { APPROVED_TESTIMONIALS } from './testimonials.js';
 
 const STATS = [
   { target: 10, suffix: '+', label: 'Tools shipped' },
-  { target: 2, suffix: '', label: 'Companies' },
+  { target: 3, suffix: '', label: 'Companies' },
   { target: 100, suffix: '', label: '% QC coverage · 70% accuracy' },
   { target: 24, suffix: '', label: '/7 reporting' },
 ];
@@ -30,6 +30,15 @@ const JOBS = [
     dark: false,
     badge: 'Past',
     body: 'Front lines of product experience — handling traveler queries end-to-end, spotting process gaps, and learning what great support feels like from the inside.',
+  },
+  {
+    when: 'Jun 2022 — Jul 2023',
+    role: 'League Operations Executive',
+    company: 'Lets GameNow',
+    logo: LETS_GAME_NOW,
+    dark: true,
+    badge: 'Past',
+    body: 'Managed day-to-day tournament operations, hosted events, and resolved operational issues. Collaborated with the Flipkart team to coordinate and run their tournaments smoothly.',
   },
 ];
 
