@@ -74,6 +74,14 @@ const PROJECTS = [
     tags: ['OCR', 'Document AI', 'Atlys'],
     status: 'shipped',
   },
+  {
+    n: '06',
+    title: 'QCteam',
+    sub: 'CRM platform',
+    body: 'Internal dashboard for the QC team to manage and deploy GitHub workflows, track leave, and coordinate day-to-day operations — keeping the team running smoothly from one place.',
+    tags: ['CRM', 'GitHub Workflows', 'Leave Tracking'],
+    status: 'internal',
+  },
 ];
 
 const SKILLS = [
