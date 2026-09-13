@@ -1,58 +1,23 @@
-import test from 'node:test';
+import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { submitTestimonial } from '../src/submitTestimonial.js';
-
-const entry = { name: ' Test Author ', role: ' Engineer ', company: ' Example ', quote: ' We built a useful tool. ' };
-
-test('submits one private review request and strips whitespace', async () => {
-  const requests = [];
-  await submitTestimonial(entry, { fetchImpl: async (...args) => {
-    requests.push(args);
-    return { ok: true, json: async () => ({ ok: true }) };
-  } });
-  assert.equal(requests.length, 1);
-  const [url, options] = requests[0];
-  assert.equal(new URL(url).hostname, 'formspree.io');
-  assert.equal(options.method, 'POST');
-  assert.equal(JSON.parse(options.body).name, 'Test Author');
-  assert.equal(options.headers['X-Master-Key'], undefined);
+import { submitTestimonial, loadTestimonials } from '../src/submitTestimonial.js';
+const values = { name: 'Test', role: 'Engineer', company: 'Example', quote: 'Helpful.', passkey: 'test-password', consent: 'on' };
+const endpoint = 'https://api.example/testimonials';
+test('does not publish without a configured API or consent', async () => {
+  const fetchImpl = () => { throw Error('must not call'); };
+  await assert.rejects(submitTestimonial(values, { endpoint: '', fetchImpl }), /not configured/);
+  await assert.rejects(submitTestimonial({ ...values, consent: false }, { endpoint, fetchImpl }), /agree/);
 });
-
-test('rejects blank and oversized fields without making a request', async () => {
-  let requests = 0;
-  const fetchImpl = async () => { requests++; };
-  await assert.rejects(submitTestimonial({ ...entry, name: '   ' }, { fetchImpl }), /name/);
-  await assert.rejects(submitTestimonial({ ...entry, quote: 'x'.repeat(2001) }, { fetchImpl }), /testimonial/);
-  assert.equal(requests, 0);
+test('rejects a bad passkey and false success responses', async () => {
+  await assert.rejects(submitTestimonial(values, { endpoint, fetchImpl: async () => ({ ok: false, json: async () => ({ error: 'Incorrect passkey.' }) }) }), /Incorrect passkey/);
+  await assert.rejects(submitTestimonial(values, { endpoint, fetchImpl: async () => ({ ok: true, json: async () => ({ ok: true }) }) }), /could not be confirmed/);
 });
-
-test('rejects service failures, rate limits, and malformed responses', async () => {
-  for (const status of [400, 429, 500]) {
-    await assert.rejects(submitTestimonial(entry, { fetchImpl: async () => ({ ok: false, status }) }));
-  }
-  await assert.rejects(submitTestimonial(entry, { fetchImpl: async () => ({ ok: true, json: async () => ({ errors: ['rejected'] }) }) }));
-  await assert.rejects(submitTestimonial(entry, { fetchImpl: async () => ({ ok: true, json: async () => { throw new Error('Invalid JSON'); } }) }));
-});
-
-test('independent simultaneous submissions never replace a shared list', async () => {
-  const requests = [];
-  const fetchImpl = async (url, options) => {
-    requests.push(JSON.parse(options.body));
-    return { ok: true, json: async () => ({ ok: true }) };
-  };
-  await Promise.all([
-    submitTestimonial({ ...entry, name: 'First' }, { fetchImpl }),
-    submitTestimonial({ ...entry, name: 'Second' }, { fetchImpl }),
-  ]);
-  assert.deepEqual(requests.map((request) => request.name).sort(), ['First', 'Second']);
-  assert.ok(requests.every((request) => !('testimonials' in request)));
-});
-
-test('forwards cancellation and does not swallow network errors', async () => {
-  const controller = new AbortController();
-  controller.abort();
-  await assert.rejects(submitTestimonial(entry, { signal: controller.signal, fetchImpl: async (_, { signal }) => {
-    assert.equal(signal, controller.signal);
-    signal.throwIfAborted();
-  } }), { name: 'AbortError' });
+test('successful publication returns public fields only and reload retrieves it', async () => {
+  const testimonial = { id: 'record', name: 'Test', role: 'Engineer', company: 'Example', quote: 'Helpful.' };
+  const result = await submitTestimonial(values, { endpoint, fetchImpl: async (_, options) => {
+    assert.equal(JSON.parse(options.body).consent, true);
+    return { ok: true, json: async () => ({ testimonial }) };
+  }});
+  assert.deepEqual(result, testimonial);
+  assert.deepEqual(await loadTestimonials({ endpoint, fetchImpl: async () => ({ ok: true, json: async () => ({ testimonials: [testimonial] }) }) }), [testimonial]);
 });

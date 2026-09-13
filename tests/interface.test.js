@@ -25,6 +25,8 @@ before(async () => {
     this.open = false;
     queueMicrotask(() => this.dispatchEvent(new Event('close')));
   };
+  process.env.VITE_TESTIMONIAL_API_URL = 'https://api.example/testimonials';
+  globalThis.fetch = async () => ({ ok: true, json: async () => ({ testimonials: [] }) });
   server = await createServer({ server: { middlewareMode: true, watch: null }, appType: 'custom' });
   App = (await server.ssrLoadModule('/src/App.jsx')).default;
 });
@@ -64,19 +66,19 @@ test('dialog survives StrictMode and reports service failure before allowing ret
   await act(async () => trigger.click());
   assert.equal(document.querySelector('dialog').open, true);
   const form = document.querySelector('dialog form');
-  for (const [name, value] of Object.entries({ name: 'Test', role: 'Engineer', company: 'Example', quote: 'A useful project.' })) {
+  for (const [name, value] of Object.entries({ name: 'Test', role: 'Engineer', company: 'Example', quote: 'A useful project.', passkey: 'test-password' })) {
     form.elements[name].value = value;
   }
   form.elements.consent.checked = true;
-  globalThis.fetch = async () => ({ ok: false, status: 500 });
+  globalThis.fetch = async () => ({ ok: false, status: 500, json: async () => ({ error: 'Publication not accepted' }) });
   await act(async () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
   assert.match(document.querySelector('[role="alert"]').textContent, /not accepted/);
   assert.equal(document.querySelector('fieldset').disabled, false);
   assert.equal(document.querySelector('.sent-block'), null);
-  globalThis.fetch = async () => ({ ok: true, json: async () => ({ ok: true }) });
+  globalThis.fetch = async () => ({ ok: true, json: async () => ({ testimonial: { id: 'new-test', name: 'Test', role: 'Engineer', company: 'Example', quote: 'A useful project.' } }) });
   await act(async () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
-  assert.match(document.querySelector('.sent-block').textContent, /Submitted for review/);
-  assert.equal(document.querySelectorAll('#testimonials figure').length, 5);
+  assert.match(document.querySelector('.sent-block').textContent, /Testimonial published/);
+  assert.equal(document.querySelectorAll('#testimonials figure').length, 6);
   await act(async () => document.querySelector('.sent-block button').click());
   assert.equal(document.querySelector('dialog'), null);
 });
@@ -84,7 +86,8 @@ test('dialog survives StrictMode and reports service failure before allowing ret
 test('closing a pending dialog aborts the request without a stale success screen', async () => {
   await act(async () => document.querySelector('.testimonial-cta button').click());
   const form = document.querySelector('dialog form');
-  for (const name of ['name', 'role', 'company', 'quote']) form.elements[name].value = 'Test';
+  for (const name of ['name', 'role', 'company', 'quote', 'passkey']) form.elements[name].value = 'Test';
+  form.elements.consent.checked = true;
   let requestSignal;
   globalThis.fetch = (_, { signal }) => new Promise((resolve, reject) => {
     requestSignal = signal;

@@ -4,6 +4,7 @@ import { ULTRAHUMAN, ATLYS, LETS_GAME_NOW } from './companies.js';
 
 import TestimonialDialog from './TestimonialDialog.jsx';
 import { APPROVED_TESTIMONIALS } from './testimonials.js';
+import { loadTestimonials } from './submitTestimonial.js';
 
 const STATS = [
   { target: 10, suffix: '+', label: 'Tools shipped' },
@@ -111,6 +112,14 @@ const SKILLS = [
 ];
 
 export default function App() {
+  const [testimonials, setTestimonials] = useState(APPROVED_TESTIMONIALS);
+  const mergeTestimonials = (entries) => setTestimonials(current =>
+    [...new Map([...current, ...entries].map(t => [t.id, t])).values()]);
+  useEffect(() => {
+    const controller = new AbortController();
+    loadTestimonials({ signal: controller.signal }).then(mergeTestimonials).catch(() => {});
+    return () => controller.abort();
+  }, []);
   const scrollBarRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -128,7 +137,7 @@ export default function App() {
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [testimonials]);
 
   // Looping counter animations — keep the original repeating stat motion.
   useEffect(() => {
@@ -421,13 +430,13 @@ export default function App() {
         </div>
       </section>
 
-      {APPROVED_TESTIMONIALS.length > 0 && (
+      {testimonials.length > 0 && (
         <section id="testimonials" tabIndex={-1} aria-labelledby="testimonials-title">
           <div className="section-head reveal">
             <h2 id="testimonials-title">Kind <em>words</em>.</h2>
           </div>
           <div className="testimonials-grid">
-            {APPROVED_TESTIMONIALS.map((testimonial) => (
+            {testimonials.map((testimonial) => (
               <figure className="tcard reveal" key={testimonial.id}>
                 <div className="quote-mark" aria-hidden="true">“</div>
                 <blockquote>{testimonial.quote}</blockquote>
@@ -441,7 +450,7 @@ export default function App() {
         </section>
       )}
 
-      {showModal && <TestimonialDialog onClose={() => setShowModal(false)} />}
+      {showModal && <TestimonialDialog onClose={() => setShowModal(false)} onPublished={entry => mergeTestimonials([entry])} />}
 
       <section id="skills" tabIndex={-1}>
         <div className="section-head reveal">
