@@ -447,6 +447,12 @@ export default function App() {
               </figure>
             ))}
           </div>
+          <div className="testimonial-cta">
+            <span>Worked with me?</span>
+            <button className="btn ghost" type="button" onClick={() => setShowModal(true)}>
+              Share a testimonial →
+            </button>
+          </div>
         </section>
       )}
 
@@ -535,12 +541,6 @@ export default function App() {
             <b>Discuss a project or role.</b><br />
             Email me about your CX operations, automation needs, or hiring plans.
           </div>
-        </div>
-        <div className="testimonial-cta">
-          <span>Worked with me?</span>
-          <button className="btn ghost" type="button" onClick={() => setShowModal(true)}>
-            Share a testimonial →
-          </button>
         </div>
       </section>
 
