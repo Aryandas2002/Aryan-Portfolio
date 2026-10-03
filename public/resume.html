@@ -26,7 +26,12 @@
   h1{font-size:22pt;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
   .title{font-size:11pt;color:#333;margin-bottom:6px;text-transform:uppercase;letter-spacing:1.5px}
   .contact{font-size:10pt;color:#444;margin-bottom:20px}
-  .contact a{color:#444;text-decoration:none}
+  .contact a{color:#444;text-decoration:none;overflow-wrap:anywhere}
+  .contact-links{display:block;margin-top:3px}
+  @media screen and (max-width:600px){
+    body{padding:24px 20px}
+    .download-bar{margin:-24px -20px 24px;padding:10px 20px;gap:12px;flex-wrap:wrap}
+  }
 
   hr{border:none;border-top:1px solid #999;margin:14px 0 12px}
 
@@ -50,7 +55,9 @@
 
   @media print{
     .download-bar{display:none}
-    body{padding:24px 32px;font-size:10.5pt}
+    body{max-width:none;padding:0;font-size:10.5pt}
+    h2,.entry-head{break-after:avoid}
+    .entry,.skills-list{break-inside:avoid}
     @page{margin:0.6in}
   }
 </style>
@@ -66,6 +73,7 @@
 <div class="title">Automation Specialist · Customer Experience</div>
 <div class="contact">
   Bengaluru, India · <a href="mailto:aryandaspvt@gmail.com">aryandaspvt@gmail.com</a> · <a href="https://www.linkedin.com/in/das-aryan/">linkedin.com/in/das-aryan</a>
+  <span class="contact-links"><a href="https://aryandas2002.github.io/Aryan-Portfolio/">Portfolio: aryandas2002.github.io/Aryan-Portfolio</a> · <a href="https://github.com/Aryandas2002">GitHub: Aryandas2002</a></span>
 </div>
 
 <hr/>
@@ -88,6 +96,8 @@
     <li>Deployed a <b>QC Bot</b> to automate ticket auditing — replacing manual sampling with consistent, scaled quality review across all support conversations.</li>
     <li>Shipped a <b>Ticket Logger</b> generating hourly and daily per-agent activity reports, making team operations measurable and accountable day-to-day.</li>
     <li>Co-developed <b>Codex LMS</b>, the internal learning platform housing all SOPs and documentation, with gamified quizzes to make onboarding interactive.</li>
+    <li>Built <b>QCteam</b>, an internal CRM dashboard for managing and deploying GitHub workflows, tracking leave and coordinating QC team operations.</li>
+    <li>Implemented <b>Roster Automation</b> within Console CRM, replacing Google Sheets-based rostering with week-off preferences and leave requests governed by configurable caps and staffing coverage requirements.</li>
   </ul>
 </div>
 
@@ -102,18 +112,35 @@
   <ul>
     <li>Handled end-to-end traveler queries across multiple channels with focus on resolution quality and SLA adherence.</li>
     <li>Identified recurring process gaps and contributed insights that informed downstream workflow improvements.</li>
+    <li>Rebuilt the <b>OCR pipeline</b> for scanning and parsing traveler visa documents; shipped to production with over 90% accuracy, reducing manual verification time and downstream errors.</li>
     <li>Built deep operational familiarity with CX pain points that now inform the automation work I lead.</li>
   </ul>
 </div>
 
+<div class="entry">
+  <div class="entry-head">
+    <div>
+      <div class="entry-role">League Operations Executive</div>
+      <div class="entry-org">Lets GameNow</div>
+    </div>
+    <div class="entry-date">Jun 2022 — Jul 2023</div>
+  </div>
+  <ul>
+    <li>Managed day-to-day tournament operations, hosted events and resolved operational issues.</li>
+    <li>Collaborated with the Flipkart team to coordinate and run their tournaments smoothly.</li>
+  </ul>
+</div>
+
 <h2>Skills</h2>
-<div class="skills-list"><b>CX & Operations:</b> CX Automation, Internal Tooling, CRM Systems, Ticket Auditing, QA Bots, Operational Reporting, SOP Documentation, LMS / L&D Systems, Process Design, Slack Workflows.</div>
+<div class="skills-list"><b>CX & Operations:</b> CX Automation, Internal Tooling, CRM Systems, Ticket Auditing, QA Bots, Operational Reporting, SOP Documentation, LMS / L&D Systems, Process Design, Slack Workflows, Tournament Operations, Roster Scheduling, Leave Management, Coverage Planning.</div>
 
 <h2>Tools & Technologies</h2>
 <div class="skills-list"><b>Frontend:</b> HTML, CSS, React, JavaScript</div>
-<div class="skills-list"><b>Automation & Backend:</b> Node.js, Slack API, Zapier, Cron Jobs, LLM APIs</div>
+<div class="skills-list"><b>Automation & Backend:</b> Node.js, Slack API, Zapier, Cron Jobs, LLM APIs, Docker</div>
 <div class="skills-list"><b>CX Platforms:</b> Freshdesk, Zendesk, Intercom</div>
-<div class="skills-list"><b>Productivity & Collaboration:</b> Notion, Google Workspace, GitHub, Figma</div>
+<div class="skills-list"><b>Productivity & Collaboration:</b> Slack, Notion, Google Workspace (including Google Sheets), GitHub, Figma</div>
+
+<div class="skills-list"><b>AI Tools:</b> ChatGPT, Claude</div>
 
 <h2>Education</h2>
 <div class="entry">
