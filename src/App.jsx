@@ -21,7 +21,7 @@ const JOBS = [
     logo: ULTRAHUMAN,
     dark: true,
     badge: 'Current',
-    body: 'Building and maintaining CX automation across AI bot conversations, refund workflows, email and Slack tooling, and operations consoles. Managing staging-to-production releases and production fixes alongside Console, QC bots, ticket loggers and Codex LMS.',
+    body: 'Building customer support tools that help agents resolve requests, manage refunds and keep track of cases. Connecting AI-assisted conversations, email, Slack and operational reporting alongside Console, QC bots, ticket loggers and Codex LMS.',
   },
   {
     when: 'Nov 2024 — May 2025',
@@ -48,7 +48,7 @@ const PROJECTS = [
     n: '01',
     title: 'Console',
     sub: 'CRM platform',
-    body: 'Internal ticket-handling CRM purpose-built for the CX team. Centralized data metrics, agent workflows and member context in one calm console.',
+    body: 'Brought customer context, agent activity and escalations into one workspace. Added app-store review management, deferred follow-ups, exportable team history and social mention alerts so support teams can track unresolved work and respond across channels.',
     tags: ['CRM', 'Data Metrics', 'CX Ops'],
     status: 'live',
   },
@@ -99,44 +99,17 @@ const PROJECTS = [
     body: 'Replaced Google Sheets-based rostering with a workflow inside Console CRM. Associates log week-off preferences and leave requests, with configurable caps and staffing coverage settings aligned to business requirements.',
     tags: ['Scheduling', 'Leave Management', 'Coverage Planning'],
     status: 'internal',
-  },
-];
-
-const ENGINEERING = [
-  {
-    "h": "Release engineering",
-    "p": "Managed staging1 → main promotion waves for cx-ai-bot and cx-ai-ops. Added calendar-versioned GitHub Releases with Amazon Bedrock-written summaries and the supporting infrastructure IAM change.",
-    "activity": "≈219 PR titles mention “promote”"
-  },
-  {
-    "h": "Bot conversations & safeguards",
-    "p": "Built replacement and address flows, including a sheet-only address editor, return-to-origin pickup dates and B2B handling. Added duplicate-step and repeat guards, claim grounding and escalation handling.",
-    "activity": "≈50 bot conversation PRs"
-  },
-  {
-    "h": "Refunds & payment operations",
-    "p": "Built the bot’s manual-refund flow with invoice-first handling and advisor approvals. Extended Rails workflows with country-specific bank rules, disputed payouts, Finance vs. CX SLA reports and a cancel-unshipped API protected by a kill switch."
-  },
-  {
-    "h": "Email & Slack workflows",
-    "p": "Developed an email composer and case records, /compose and /track commands, Slack draft and relay flows, and threaded ITC alerts.",
-    "activity": "≈130 email-related · ≈60 Slack-related PR titles"
-  },
-  {
-    "h": "CX operations console",
-    "p": "Added a Socials tab for App Store and Play Store reviews, floor and agent history with CSV export, a deferred queue and escalation desk, and an X-mentions feed delivered to Slack."
-  },
-  {
-    "h": "Reliability & reporting",
-    "p": "Resolved Lens review findings and made Postgres migrations lock-safe under repository migration rules. Added the CX Uploads tab and revenue cards in reports-wiki, alongside incident response and production bug triage.",
-    "activity": "≈11 migration PRs"
-  }
+  },,
+  {"n":"08","title":"AI Support Assistant","sub":"clearer paths to resolution","body":"Built guided replacement, address-update and pickup workflows for individual and business customers. Added safeguards against repeated steps and unsupported claims, with escalation paths that bring in an advisor when a request needs human judgment.","tags":["Conversational AI","Customer Journeys","Escalations"],"status":"shipped"},
+  {"n":"09","title":"Refund Management","sub":"clear approvals and ownership","body":"Connected invoice checks, advisor approvals and country-specific bank requirements in a guided refund process. Added disputed-payment handling, cancellation of unshipped orders and separate Finance and support SLA reports so teams can see who owns the next step.","tags":["Refund Workflows","Approvals","SLA Reporting"],"status":"shipped"},
+  {"n":"10","title":"Connected Support Communications","sub":"case context across email and Slack","body":"Built email drafting and case records alongside Slack drafting, tracking and message relay workflows. Kept alerts in dedicated threads so agents can prepare replies, follow cases and coordinate handoffs with the relevant context in reach.","tags":["Email Tools","Slack","Case Tracking"],"status":"shipped"},
+  {"n":"11","title":"Operations Reporting & Reliability","sub":"visibility for everyday decisions","body":"Added support-data uploads and revenue views to operational reports, giving teams access to activity and commercial context in one place. Strengthened the tools behind these workflows with safer database migrations, production bug fixes and incident triage.","tags":["Reporting","Postgres","Reliability"],"status":"shipped"}
 ];
 
 const SKILLS = [
   { h: 'Backend Engineering', p: 'Python, FastAPI, async SQLAlchemy, Rails, Postgres and lock-safe migrations.' },
   { h: 'Frontend Engineering', p: 'TypeScript and React for agent consoles, case records and operational workflows.' },
-  { h: 'Integrations & Releases', p: 'Slack, Amazon Bedrock, GitHub Releases, CalVer, CI and release engineering.' },
+  { h: 'AI & Workflow Integrations', p: 'Slack and Amazon Bedrock integrations that connect support conversations, team workflows and operational tools.' },
   { h: 'Production Reliability', p: 'Incident triage, production bug fixes, conversation safeguards and controlled API rollouts.' },
   { h: 'CX Automation', p: 'Ticket QC bots, agent loggers, SLA monitors, ops dashboards.' },
   { h: 'Internal Tooling', p: 'CRM-style consoles, admin panels, knowledge platforms.' },
@@ -463,23 +436,6 @@ export default function App() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section id="cx-engineering" tabIndex={-1} aria-labelledby="engineering-title">
-        <div className="section-head reveal">
-          <h2 id="engineering-title">CX engineering, <em>in production</em>.</h2>
-        </div>
-        <p>Selected contributions at Ultrahuman across cx-ai-bot, cx-ai-ops, Rails and infrastructure — from customer conversations to production releases.</p>
-        <div className="skills-grid">
-          {ENGINEERING.map((item, i) => (
-            <article className={`skill reveal${i % 2 ? ' d1' : ''}`} key={item.h}>
-              <h3>{item.h}</h3>
-              <p>{item.p}</p>
-              {item.activity && <p><strong>{item.activity}</strong></p>}
-            </article>
-          ))}
-        </div>
-        <p>PR figures are approximate topic counts from titles; categories may overlap and do not represent unique features or measured business outcomes. Work follows the repositories’ shared engineering and migration standards.</p>
       </section>
 
       {testimonials.length > 0 && (
