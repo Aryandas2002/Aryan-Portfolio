@@ -9,7 +9,7 @@ import { loadTestimonials } from './submitTestimonial.js';
 const STATS = [
   { target: 10, suffix: '+', label: 'Tools shipped' },
   { target: 3, suffix: '', label: 'Companies' },
-  { target: 100, suffix: '', label: '% QC coverage · 70% accuracy' },
+  { target: 100, suffix: '%', label: 'Reported ticket-audit coverage' },
   { target: 24, suffix: '', label: '/7 reporting' },
 ];
 
@@ -56,7 +56,7 @@ const PROJECTS = [
     n: '02',
     title: 'QC Bot',
     sub: 'ticket auditing',
-    body: 'Automated quality-control bot auditing tickets at scale with 100% coverage and 70% accuracy — flagging tone, SLA breaches and resolution quality so QA stops sampling and starts improving.',
+    body: 'Built automated ticket auditing for tone, SLA breaches and resolution quality. Reported audit coverage is 100%; coverage describes tickets reviewed, not the correctness of every assessment.',
     tags: ['Automation', 'QA', 'LLM'],
     status: 'running',
   },
@@ -64,7 +64,7 @@ const PROJECTS = [
     n: '03',
     title: 'Ticket Logger',
     sub: 'hourly & daily',
-    body: 'Per-agent ticket activity reported hourly and daily. Made the entire team operationally functional day-to-day with zero manual chasing of numbers.',
+    body: 'Per-agent ticket activity reported hourly and daily. Gave the team a regular view of support activity without manually compiling each report.',
     tags: ['Reporting', 'Cron', 'Slack'],
     status: 'running',
   },
@@ -99,12 +99,59 @@ const PROJECTS = [
     body: 'Replaced Google Sheets-based rostering with a workflow inside Console CRM. Associates log week-off preferences and leave requests, with configurable caps and staffing coverage settings aligned to business requirements.',
     tags: ['Scheduling', 'Leave Management', 'Coverage Planning'],
     status: 'internal',
-  },,
+  },
   {"n":"08","title":"AI Support Assistant","sub":"clearer paths to resolution","body":"Built guided replacement, address-update and pickup workflows for individual and business customers. Added safeguards against repeated steps and unsupported claims, with escalation paths that bring in an advisor when a request needs human judgment.","tags":["Conversational AI","Customer Journeys","Escalations"],"status":"shipped"},
   {"n":"09","title":"Refund Management","sub":"clear approvals and ownership","body":"Connected invoice checks, advisor approvals and country-specific bank requirements in a guided refund process. Added disputed-payment handling, cancellation of unshipped orders and separate Finance and support SLA reports so teams can see who owns the next step.","tags":["Refund Workflows","Approvals","SLA Reporting"],"status":"shipped"},
   {"n":"10","title":"Connected Support Communications","sub":"case context across email and Slack","body":"Built email drafting and case records alongside Slack drafting, tracking and message relay workflows. Kept alerts in dedicated threads so agents can prepare replies, follow cases and coordinate handoffs with the relevant context in reach.","tags":["Email Tools","Slack","Case Tracking"],"status":"shipped"},
   {"n":"11","title":"Operations Reporting & Reliability","sub":"visibility for everyday decisions","body":"Added support-data uploads and revenue views to operational reports, giving teams access to activity and commercial context in one place. Strengthened the tools behind these workflows with safer database migrations, production bug fixes and incident triage.","tags":["Reporting","Postgres","Reliability"],"status":"shipped"}
 ];
+
+const CASE_STUDIES = {
+  "08": [
+    [
+      "Problem",
+      "Replacement, address and pickup requests require different steps, with exceptions for business customers and cases that need an advisor."
+    ],
+    [
+      "My contribution",
+      "Built conversation flows, a dedicated address editor, pickup-date handling and business-customer paths. Added duplicate-step and repeat guards, claim grounding and escalation handling."
+    ],
+    [
+      "Workflow overview",
+      "Customer request → relevant support flow → required details and safeguards → next action or advisor escalation. This describes the functional flow, not the private system architecture."
+    ],
+    [
+      "Safeguards and trade-offs",
+      "Repeat guards constrain looping conversations; claim grounding constrains unsupported responses. Escalation preserves a human decision point when automation cannot complete the request."
+    ],
+    [
+      "Delivered outcome",
+      "Guided paths for common customer requests, with advisor escalation for exceptions. The outcome is a shipped capability; no unverified reduction in resolution time is claimed."
+    ]
+  ],
+  "09": [
+    [
+      "Problem",
+      "Refund handling spans invoice details, approvals, country-specific banking requirements and coordination between support and Finance."
+    ],
+    [
+      "My contribution",
+      "Built the manual-refund conversation flow with invoice-first handling and advisor approval. Extended Rails workflows with country-specific bank rules, disputed payouts, SLA reporting and an API to cancel unshipped orders."
+    ],
+    [
+      "Workflow overview",
+      "Invoice context → refund details and country rules → advisor approval. Disputes have a dedicated workflow; separate Finance and support SLA reports make responsibility visible."
+    ],
+    [
+      "Safeguards and trade-offs",
+      "Advisor approval keeps a human checkpoint in the refund process. The unshipped-order cancellation API has a kill switch so the operation can be disabled when needed."
+    ],
+    [
+      "Delivered outcome",
+      "A defined refund process, dedicated disputed-payment handling and visibility into ownership across handoffs. No unverified savings or turnaround-time improvement is claimed."
+    ]
+  ]
+};
 
 const SKILLS = [
   { h: 'Backend Engineering', p: 'Python, FastAPI, async SQLAlchemy, Rails, Postgres and lock-safe migrations.' },
@@ -290,19 +337,9 @@ export default function App() {
 
         <div className="hero-grid">
           <div>
-            <h1>
-              <span className="word"><span style={{ animationDelay: '.1s' }}>Automation&nbsp;</span></span>
-              <span className="word"><span style={{ animationDelay: '.22s' }}>specialist&nbsp;</span></span>
-              <span className="word"><span style={{ animationDelay: '.34s' }}>building&nbsp;</span></span><br />
-              <span className="word"><span style={{ animationDelay: '.46s' }}><em>operational</em>&nbsp;</span></span>
-              <span className="word"><span style={{ animationDelay: '.58s' }}>leverage&nbsp;</span></span>
-              <span className="word"><span style={{ animationDelay: '.7s' }}>for&nbsp;</span></span>
-              <span className="word"><span style={{ animationDelay: '.82s' }}>CX&nbsp;teams.</span></span>
-            </h1>
+            <h1>Automation specialist building <em>production AI workflows</em> and operational tools.</h1>
             <p className="lead">
-              I'm Aryan Das — currently leading internal automations at <b>Ultrahuman</b>, previously
-              in Product Experience at <b>Atlys</b>. I design and ship the internal tools, QA bots and
-              reporting systems that help customer support orgs scale without losing quality.
+              I'm Aryan Das. I build support tools at <b>Ultrahuman</b>, drawing on front-line product experience at <b>Atlys</b>. My work connects customer workflows, backend logic, agent interfaces and production safeguards. I'm interested in forward deployed engineering roles that bring building software closer to the people using it.
             </p>
             <div className="cta-row">
               <a href="#work" className="btn primary" onClick={closeMenu}>
@@ -425,6 +462,19 @@ export default function App() {
               <div>
                 <h3>{p.title} <em>— {p.sub}</em></h3>
                 <p>{p.body}</p>
+                {CASE_STUDIES[p.n] && (
+                  <details style={{ marginTop: '1rem' }}>
+                    <summary style={{ cursor: 'pointer', fontWeight: 600, padding: '0.5rem 0' }}>Read case study: {p.title}</summary>
+                    <dl>
+                      {CASE_STUDIES[p.n].map(([label, description]) => (
+                        <div key={label} style={{ marginTop: '1rem' }}>
+                          <dt style={{ fontWeight: 600 }}>{label}</dt>
+                          <dd style={{ margin: '0.25rem 0 0' }}><p>{description}</p></dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </details>
+                )}
               </div>
               <div className="tags">
                 <div className="status-row">
@@ -503,7 +553,7 @@ export default function App() {
         </div>
         <div className="resume-block reveal">
           <div>
-            <h3>The full story, <em>on one page.</em></h3>
+            <h3>Experience, skills <em>and selected contributions.</em></h3>
             <p>View my résumé and use your browser’s print option to save a PDF.</p>
             <div className="actions">
               <a href={`${import.meta.env.BASE_URL}resume.html`} target="_blank" rel="noopener" className="btn primary">
@@ -556,7 +606,7 @@ export default function App() {
         <div className="foot-top">
           <div className="foot-brand">
             <div className="mark">Aryan<span className="dot"></span></div>
-            <p>Automation specialist building internal tools, QA bots and reporting systems for CX teams.</p>
+            <p>Automation specialist building production AI workflows and operational tools.</p>
           </div>
 
           <div className="foot-col">
