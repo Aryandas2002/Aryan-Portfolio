@@ -25,6 +25,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Generate downloadable resume PDF
+        run: |
+          google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --no-pdf-header-footer --print-to-pdf="$PWD/public/Aryan_Das_Resume.pdf" \
+            "file://$PWD/public/resume.html"
+          test -s public/Aryan_Das_Resume.pdf
+          test "$(head -c 5 public/Aryan_Das_Resume.pdf)" = '%PDF-'
       - run: npm run build
         env:
           VITE_TESTIMONIAL_API_URL: ${{ vars.VITE_TESTIMONIAL_API_URL }}
